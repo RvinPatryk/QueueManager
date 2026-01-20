@@ -1,4 +1,4 @@
-![QueueManagerLogo][https://i.imgur.com/izaTA1f.png]
+![QueueManagerLogo](https://i.imgur.com/izaTA1f.png)
 ---
 # QueueManager
 >QueueManager to prosta aplikacja do zarządzania kolejką zadań z możliwością wyboru strategii priorytetyzacji przez użytkownika. Pozwala dodawać, edytować i usuwać zadania oraz ustalać ich kolejność wykonywania w zależności od wybranego trybu, np. FIFO, LIFO, priorytet 1–10, SJF (Shortest Job First), LJF (Longest Job First), RR (Round Robin) oraz Random/Shuffle. Aplikacja sprawdza się w organizacji pracy, planowaniu oraz obsłudze procesów wymagających elastycznego kolejkowania zadań, a także może być integrowana z innymi systemami i aplikacjami w celu automatyzacji przepływu pracy.
