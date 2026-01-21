@@ -28,3 +28,40 @@ Aplikacja automatycznie pobiera zadania z kolejki i realizuje je w tle, obsługu
 System udostępnia również funkcje monitorowania i podglądu, umożliwiające użytkownikom śledzenie aktualnego stanu kolejki, listy aktywnych i zakończonych zadań oraz historii ich przetwarzania. Dzięki temu aplikacja może pełnić rolę centralnego mechanizmu kolejkowego wykorzystywanego w większych systemach informatycznych, np. do obsługi procesów wsadowych, zadań backgroundowych lub integracji między systemami.
 
 ---
+
+## ✅ Wymagania funkcjonalne
+
+Aplikacja do zarządzania kolejkowaniem zadań umożliwia tworzenie, zarządzanie oraz przetwarzanie zadań w uporządkowany i kontrolowany sposób.
+
+### 1) Zarządzanie zadaniami
+- Dodawanie nowych zadań do systemu
+- Edycja istniejących zadań
+- Usuwanie zadań z kolejki
+- Przechowywanie podstawowych informacji o zadaniu:
+  - identyfikator
+  - nazwa
+  - opis
+  - priorytet
+  - status
+  - data utworzenia
+
+### 2) Obsługa kolejki
+- Umieszczanie zadań w kolejce przetwarzania
+- Kolejkowanie zadań z uwzględnieniem priorytetów
+- Zachowanie kolejności FIFO dla zadań o tym samym priorytecie
+
+### 3) Przetwarzanie zadań
+- Automatyczne pobieranie zadań z kolejki do realizacji
+- Zmiana statusu zadania w trakcie jego cyklu życia:
+  - oczekujące
+  - w trakcie przetwarzania
+  - zakończone
+  - zakończone błędem
+- Obsługa ponownego przetwarzania zadań zakończonych błędem
+
+### 4) Monitorowanie i podgląd
+- Podgląd aktualnego stanu kolejki
+- Wyświetlanie listy aktywnych oraz zakończonych zadań
+- Dostęp do historii przetwarzania zadań
+
+---
