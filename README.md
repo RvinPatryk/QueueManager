@@ -33,7 +33,7 @@ System udostępnia również funkcje monitorowania i podglądu, umożliwiające 
 
 Aplikacja do zarządzania kolejkowaniem zadań umożliwia tworzenie, zarządzanie oraz przetwarzanie zadań w uporządkowany i kontrolowany sposób.
 
-### 1) Zarządzanie zadaniami
+### 1 Zarządzanie zadaniami
 - Dodawanie nowych zadań do systemu
 - Edycja istniejących zadań
 - Usuwanie zadań z kolejki
@@ -45,12 +45,12 @@ Aplikacja do zarządzania kolejkowaniem zadań umożliwia tworzenie, zarządzani
   - status
   - data utworzenia
 
-### 2) Obsługa kolejki
+### 2 Obsługa kolejki
 - Umieszczanie zadań w kolejce przetwarzania
 - Kolejkowanie zadań z uwzględnieniem priorytetów
 - Zachowanie kolejności FIFO dla zadań o tym samym priorytecie
 
-### 3) Przetwarzanie zadań
+### 3 Przetwarzanie zadań
 - Automatyczne pobieranie zadań z kolejki do realizacji
 - Zmiana statusu zadania w trakcie jego cyklu życia:
   - oczekujące
@@ -59,9 +59,33 @@ Aplikacja do zarządzania kolejkowaniem zadań umożliwia tworzenie, zarządzani
   - zakończone błędem
 - Obsługa ponownego przetwarzania zadań zakończonych błędem
 
-### 4) Monitorowanie i podgląd
+### 4 Monitorowanie i podgląd
 - Podgląd aktualnego stanu kolejki
 - Wyświetlanie listy aktywnych oraz zakończonych zadań
 - Dostęp do historii przetwarzania zadań
+
+---
+
+## ⚙️ Wymagania niefunkcjonalne
+
+### 1 Technologiczne
+- Backend aplikacji został zaimplementowany w technologii **.NET**
+- Aplikacja udostępnia interfejs API oparty na architekturze **REST**
+- Dane aplikacji są przechowywane w **bazie danych**
+- Projekt jest wersjonowany przy użyciu **Git** i hostowany w serwisie **GitHub**
+
+### 2 Wydajność
+- System obsługuje jednoczesne przetwarzanie wielu zadań
+- Operacje dodawania i pobierania zadań z kolejki są zoptymalizowane pod kątem czasu odpowiedzi
+
+### 3 Bezpieczeństwo
+- Dostęp do API jest kontrolowany przez **autoryzację**
+- Walidacja danych wejściowych zapobiega wprowadzaniu niepoprawnych danych
+- Operacje krytyczne są ograniczone do uprawnionych użytkowników
+
+### 4 Równoległość i niezawodność
+- System wspiera równoległe przetwarzanie zadań
+- Mechanizmy synchronizacji zapobiegają konfliktom przy dostępie do kolejki
+- Błędy przetwarzania zadań są rejestrowane i nie blokują całego systemu
 
 ---
