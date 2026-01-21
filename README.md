@@ -12,3 +12,7 @@ Projekt sprawdza się w organizacji pracy, planowaniu oraz obsłudze procesów w
 - **Typ aplikacji:** Backend / REST API (ASP.NET Core Web API)  
 - **Cel:** zarządzanie kolejką zadań oraz ich przetwarzanie w tle  
 - **Autorzy:** Patryk Pisarek, Jakub Kruźlak, Szymon Suchanek  
+ 
+![QueueManager Logo](docs/logo.png)
+
+---
