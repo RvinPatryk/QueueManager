@@ -174,3 +174,52 @@ Zastosowana architektura:
 - **Visual Studio** – środowisko programistyczne
 
 ---
+
+## 🚀 Proces uruchomienia projektu
+
+Proces uruchomienia projektu opisuje kroki niezbędne do poprawnego uruchomienia aplikacji w środowisku lokalnym lub kontenerowym.
+
+### Etap 1: Wymagania wstępne
+Przed uruchomieniem projektu wymagane jest przygotowanie środowiska:
+- zainstalowane **.NET SDK**
+- zainstalowany **Docker** *(opcjonalnie, uruchomienie kontenerowe)*
+- dostęp do repozytorium projektu (**GitHub**)
+- środowisko programistyczne (np. **Visual Studio / VS Code**)
+
+### Etap 2: Pobranie projektu
+1. Sklonowanie repozytorium projektu z systemu kontroli wersji  
+2. Przejście do katalogu głównego projektu  
+
+### Etap 3: Konfiguracja środowiska
+1. Sprawdzenie plików konfiguracyjnych aplikacji  
+2. Konfiguracja połączenia z bazą danych:
+   - ustawienie connection stringa w pliku konfiguracyjnym  
+3. Weryfikacja ustawień środowiskowych:
+   - tryb uruchomienia (Development)
+   - port aplikacji
+
+### Etap 4: Uruchomienie aplikacji lokalnie
+1. Otwarcie projektu w środowisku programistycznym  
+2. Przywrócenie zależności projektu  
+3. Uruchomienie aplikacji (serwer Web API)  
+4. Automatyczne uruchomienie procesów tła (background worker)
+
+### Etap 5: Uruchomienie aplikacji w kontenerze Docker (opcjonalnie)
+1. Zbudowanie obrazu aplikacji (Dockerfile)  
+2. Uruchomienie kontenera aplikacji  
+3. Uruchomienie kontenera bazy danych (jeśli wymagane)  
+4. Nawiązanie komunikacji pomiędzy kontenerami
+
+### Etap 6: Weryfikacja poprawności działania
+Po uruchomieniu aplikacji możliwa jest weryfikacja jej działania poprzez:
+1. Swagger (dokumentacja API)  
+2. Wysłanie przykładowego żądania dodania zadania  
+3. Sprawdzenie zmiany statusu zadania  
+4. Monitorowanie logów aplikacji  
+
+### Etap 7: Zatrzymanie aplikacji
+- zatrzymanie aplikacji lokalnie (IDE)  
+lub  
+- zatrzymanie kontenerów Docker  
+
+---
