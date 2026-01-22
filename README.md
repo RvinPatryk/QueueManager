@@ -119,24 +119,39 @@ System można logicznie podzielić na moduły:
 
 ## 👤 Przypadki użycia
 
-### 1) Dodanie nowego zadania
+### 1. Dodanie nowego zadania
 **Aktor:** Użytkownik  
 **Opis:**  
 Użytkownik dodaje nowe zadanie, określając jego podstawowe parametry. Zadanie zostaje zapisane w systemie i umieszczone w kolejce oczekujących.
 
-### 2) Przetwarzanie zadania
+### 2. Przetwarzanie zadania
 **Aktor:** System  
 **Opis:**  
 System automatycznie pobiera zadanie z kolejki zgodnie z jego priorytetem i rozpoczyna przetwarzanie. Po zakończeniu status zadania jest aktualizowany.
 
-### 3) Podgląd kolejki
+### 3. Podgląd kolejki
 **Aktor:** Użytkownik  
 **Opis:**  
 Użytkownik przegląda aktualny stan kolejki oraz listę zadań w różnych statusach.
 
-### 4) Obsługa błędu zadania
+### 4. Obsługa błędu zadania
 **Aktor:** System / Administrator  
 **Opis:**  
 W przypadku błędu podczas przetwarzania zadania system oznacza je jako zakończone błędem i zapisuje informacje diagnostyczne.
 
 ---
+
+## 🏗️ Architektura systemu
+
+Projekt zakłada prostą architekturę backendową opartą o REST API + przetwarzanie w tle.
+
+### Uzasadnienie wyboru architektury
+Zastosowana architektura:
+- spełnia wymagania funkcjonalne systemu kolejkowania
+- umożliwia równoległe przetwarzanie zadań
+- zapewnia prostą rozbudowę w przyszłości
+- jest łatwa w implementacji i zrozumiała
+- jest zgodna z technologią .NET oraz REST API
+
+### Diagram (draw.io)
+![Architektura](docs/architecture.png)
