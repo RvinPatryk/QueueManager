@@ -223,3 +223,27 @@ lub
 - zatrzymanie kontenerów Docker  
 
 ---
+
+## 📁 Struktura folderów
+
+### Opis katalogów
+- `src/` – główny kod aplikacji (backend, logika biznesowa, dostęp do danych)
+- `tests/` – projekty testowe (testy jednostkowe i integracyjne)
+- `docs/` – dokumentacja projektu (wymagania, architektura, instrukcje uruchomienia)
+- `samples/` – przykładowe scenariusze użycia lub projekty demonstracyjne
+- `lib/` – biblioteki lokalne, które nie mogą być dystrybuowane jako pakiety NuGet
+- `artifacts/` – artefakty procesu budowania (DLL, paczki, pliki wynikowe)
+- `packages/` – lokalne pakiety NuGet (jeśli używane)
+- `build/` – skrypty i konfiguracje procesu budowania projektu
+
+### Pliki główne projektu
+- `QueueManager.sln` – plik rozwiązania .NET
+- `README.md` – opis projektu i podstawowa instrukcja uruchomienia
+- `LICENSE` – licencja projektu (opcjonalnie)
+- `.editorconfig` – wspólne ustawienia formatowania kodu
+- `.gitignore` – lista plików i katalogów ignorowanych przez system kontroli wersji
+- `.gitattributes` – konfiguracja repozytorium Git
+- `NuGet.Config` – konfiguracja źródeł pakietów NuGet
+- `build.cmd / build.sh` – skrypty uruchamiające proces budowania projektu
+
+---
