@@ -116,3 +116,27 @@ System można logicznie podzielić na moduły:
   - REST API do integracji z frontendem lub innymi systemami
 
 ---
+
+## 👤 Przypadki użycia
+
+### 1) Dodanie nowego zadania
+**Aktor:** Użytkownik  
+**Opis:**  
+Użytkownik dodaje nowe zadanie, określając jego podstawowe parametry. Zadanie zostaje zapisane w systemie i umieszczone w kolejce oczekujących.
+
+### 2) Przetwarzanie zadania
+**Aktor:** System  
+**Opis:**  
+System automatycznie pobiera zadanie z kolejki zgodnie z jego priorytetem i rozpoczyna przetwarzanie. Po zakończeniu status zadania jest aktualizowany.
+
+### 3) Podgląd kolejki
+**Aktor:** Użytkownik  
+**Opis:**  
+Użytkownik przegląda aktualny stan kolejki oraz listę zadań w różnych statusach.
+
+### 4) Obsługa błędu zadania
+**Aktor:** System / Administrator  
+**Opis:**  
+W przypadku błędu podczas przetwarzania zadania system oznacza je jako zakończone błędem i zapisuje informacje diagnostyczne.
+
+---
