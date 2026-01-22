@@ -143,8 +143,6 @@ W przypadku błędu podczas przetwarzania zadania system oznacza je jako zakońc
 
 ## 🏗️ Architektura systemu
 
-Projekt zakłada prostą architekturę backendową opartą o REST API + przetwarzanie w tle.
-
 ### Uzasadnienie wyboru architektury
 Zastosowana architektura:
 - spełnia wymagania funkcjonalne systemu kolejkowania
@@ -155,3 +153,24 @@ Zastosowana architektura:
 
 ### Diagram (draw.io)
 ![Architektura](docs/architecture.png)
+
+---
+
+## 🛠️ Stos technologiczny
+
+### Backend
+- **.NET** – główna platforma do budowy aplikacji backendowej
+- **ASP.NET Core Web API** – implementacja warstwy API
+- **C#** – język programowania
+
+### Baza danych
+- **SQL Server** – przechowywanie danych o zadaniach i stanie kolejki
+
+### Narzędzia i środowisko
+- **Git** – system kontroli wersji
+- **GitHub** – hosting repozytorium
+- **Docker** – konteneryzacja aplikacji
+- **Swagger / OpenAPI** – dokumentacja i testowanie API
+- **Visual Studio** – środowisko programistyczne
+
+---
