@@ -64,7 +64,7 @@ QueueManager to aplikacja umożliwiająca dodawanie, monitorowanie i równoległ
 
 ### 1. Wydajność
 
-  System powinien 
+  System powinien wspierać przetwarzanie równoległe zadań oraz obsługę minimum 1000 zadań w kolejce.
 
 ### 2. Niezawodność
 
