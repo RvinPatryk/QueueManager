@@ -3,10 +3,64 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:QueueManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Queue Manager" Height="600" Width="1000">
 
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="Dodaj zadanie" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Id"/>
+            <TextBox Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Nazwa"/>
+            <TextBox Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Opis"/>
+            <TextBox Text="{Binding Opis, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Priorytet"/>
+            <TextBox Text="{Binding Priorytet, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Autor"/>
+            <TextBox Text="{Binding Autor, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Osoba przypisana"/>
+            <TextBox Text="{Binding OsobaPrzypisana, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Przewidziany czas (hh:mm:ss)"/>
+            <TextBox Text="{Binding PrzewidzianyCzas, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Termin"/>
+            <DatePicker SelectedDate="{Binding Termin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+            <Button Content="Dodaj zadanie"
+                    Command="{Binding AddTaskCommand}"
+                    Height="35"/>
+        </StackPanel>
+
+        <DataGrid Grid.Column="2"
+                  ItemsSource="{Binding Tasks}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
+                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" />
+                <DataGridTextColumn Header="Priorytet" Binding="{Binding Priorytet}" />
+                <DataGridTextColumn Header="Autor" Binding="{Binding Autor}" />
+                <DataGridTextColumn Header="Przypisana" Binding="{Binding OsobaPrzypisana}" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                <DataGridTextColumn Header="Data utworzenia" Binding="{Binding DataUtworzenia}" />
+                <DataGridTextColumn Header="Przewidziany czas" Binding="{Binding PrzewidzianyCzas}" />
+                <DataGridTextColumn Header="Termin" Binding="{Binding Termin}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
