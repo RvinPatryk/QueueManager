@@ -42,13 +42,22 @@
 
             <Button Content="Dodaj zadanie"
                     Command="{Binding AddTaskCommand}"
+                    Height="35"
+                    Margin="0,0,0,8"/>
+
+            <Button Content="Usuń zaznaczone"
+                    Command="{Binding DeleteTaskCommand}"
                     Height="35"/>
         </StackPanel>
 
-        <DataGrid Grid.Column="2"
-                  ItemsSource="{Binding Tasks}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True">
+        <DataGrid x:Name="TasksDataGrid"
+          Grid.Column="2"
+          ItemsSource="{Binding Tasks}"
+          AutoGenerateColumns="False"
+          IsReadOnly="True"
+          SelectionMode="Extended"
+          SelectionUnit="FullRow"
+          SelectionChanged="TasksDataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
                 <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />

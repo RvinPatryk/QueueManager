@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using QueueManager.Models;
@@ -22,6 +24,7 @@ namespace QueueManager.ViewModels
         private QueueTaskStatus _status = QueueTaskStatus.Nowe;
         private TimeSpan _przewidzianyCzas = TimeSpan.FromMinutes(30);
         private DateTime? _termin;
+        private IList _selectedTasks = new ArrayList();
 
         public ObservableCollection<QueueTask> Tasks { get; set; } = new();
 
@@ -97,11 +100,23 @@ namespace QueueManager.ViewModels
             set => SetField(ref _termin, value);
         }
 
+        public IList SelectedTasks
+        {
+            get => _selectedTasks;
+            set
+            {
+                if (SetField(ref _selectedTasks, value))
+                    CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
         public ICommand AddTaskCommand { get; }
+        public ICommand DeleteTaskCommand { get; }
 
         public MainViewModel()
         {
             AddTaskCommand = new RelayCommand(AddTask);
+            DeleteTaskCommand = new RelayCommand(DeleteTasks, CanDeleteTasks);
         }
 
         private void AddTask()
@@ -124,6 +139,23 @@ namespace QueueManager.ViewModels
 
             Tasks.Add(task);
             ClearForm();
+        }
+
+        private void DeleteTasks()
+        {
+            var tasksToDelete = SelectedTasks.Cast<QueueTask>().ToList();
+
+            foreach (var task in tasksToDelete)
+            {
+                Tasks.Remove(task);
+            }
+
+            SelectedTasks = new ArrayList();
+        }
+
+        private bool CanDeleteTasks()
+        {
+            return SelectedTasks != null && SelectedTasks.Count > 0;
         }
 
         private void ClearForm()

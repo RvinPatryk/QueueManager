@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections;
 
 namespace QueueManager
 {
@@ -18,6 +19,14 @@ namespace QueueManager
         {
             InitializeComponent();
             DataContext = new MainViewModel();
+        }
+
+        private void TasksDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm && sender is DataGrid dataGrid)
+            {
+                vm.SelectedTasks = dataGrid.SelectedItems;
+            }
         }
     }
 }
