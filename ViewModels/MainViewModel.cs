@@ -5,8 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using QueueManager.Models;
 using QueueManager.Helpers;
+using QueueManager.Models;
 
 namespace QueueManager.ViewModels
 {
@@ -24,6 +24,7 @@ namespace QueueManager.ViewModels
         private QueueTaskStatus _status = QueueTaskStatus.Nowe;
         private TimeSpan _przewidzianyCzas = TimeSpan.FromMinutes(30);
         private DateTime? _termin;
+
         private IList _selectedTasks = new ArrayList();
 
         public ObservableCollection<QueueTask> Tasks { get; set; } = new();
@@ -106,17 +107,22 @@ namespace QueueManager.ViewModels
             set
             {
                 if (SetField(ref _selectedTasks, value))
+                {
+                    LoadSelectedTaskToForm();
                     CommandManager.InvalidateRequerySuggested();
+                }
             }
         }
 
         public ICommand AddTaskCommand { get; }
         public ICommand DeleteTaskCommand { get; }
+        public ICommand UpdateTaskCommand { get; }
 
         public MainViewModel()
         {
             AddTaskCommand = new RelayCommand(AddTask);
             DeleteTaskCommand = new RelayCommand(DeleteTasks, CanDeleteTasks);
+            UpdateTaskCommand = new RelayCommand(UpdateTask, CanUpdateTask);
         }
 
         private void AddTask()
@@ -156,6 +162,57 @@ namespace QueueManager.ViewModels
         private bool CanDeleteTasks()
         {
             return SelectedTasks != null && SelectedTasks.Count > 0;
+        }
+
+        private void LoadSelectedTaskToForm()
+        {
+            if (SelectedTasks == null || SelectedTasks.Count != 1)
+                return;
+
+            if (SelectedTasks[0] is not QueueTask task)
+                return;
+
+            Id = task.Id;
+            Nazwa = task.Nazwa;
+            Opis = task.Opis;
+            Priorytet = task.Priorytet;
+            Autor = task.Autor;
+            OsobaPrzypisana = task.OsobaPrzypisana;
+            DataUtworzenia = task.DataUtworzenia;
+            DataRozpoczecia = task.DataRozpoczecia;
+            DataUkonczenia = task.DataUkonczenia;
+            Status = task.Status;
+            PrzewidzianyCzas = task.PrzewidzianyCzas;
+            Termin = task.Termin;
+        }
+
+        private void UpdateTask()
+        {
+            if (SelectedTasks == null || SelectedTasks.Count != 1)
+                return;
+
+            if (SelectedTasks[0] is not QueueTask task)
+                return;
+
+            task.Id = Id;
+            task.Nazwa = Nazwa;
+            task.Opis = Opis;
+            task.Priorytet = Priorytet;
+            task.Autor = Autor;
+            task.OsobaPrzypisana = OsobaPrzypisana;
+            task.DataUtworzenia = DataUtworzenia;
+            task.DataRozpoczecia = DataRozpoczecia;
+            task.DataUkonczenia = DataUkonczenia;
+            task.Status = Status;
+            task.PrzewidzianyCzas = PrzewidzianyCzas;
+            task.Termin = Termin;
+
+            ClearForm();
+        }
+
+        private bool CanUpdateTask()
+        {
+            return SelectedTasks != null && SelectedTasks.Count == 1;
         }
 
         private void ClearForm()

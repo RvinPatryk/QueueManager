@@ -41,13 +41,18 @@
             <DatePicker SelectedDate="{Binding Termin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
 
             <Button Content="Dodaj zadanie"
-                    Command="{Binding AddTaskCommand}"
-                    Height="35"
-                    Margin="0,0,0,8"/>
+            Command="{Binding AddTaskCommand}"
+            Height="35"
+            Margin="0,0,0,8"/>
+
+            <Button Content="Zapisz zmiany"
+            Command="{Binding UpdateTaskCommand}"
+            Height="35"
+            Margin="0,0,0,8"/>
 
             <Button Content="Usuń zaznaczone"
-                    Command="{Binding DeleteTaskCommand}"
-                    Height="35"/>
+            Command="{Binding DeleteTaskCommand}"
+            Height="35"/>
         </StackPanel>
 
         <DataGrid x:Name="TasksDataGrid"
@@ -58,6 +63,7 @@
           SelectionMode="Extended"
           SelectionUnit="FullRow"
           SelectionChanged="TasksDataGrid_SelectionChanged">
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
                 <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
