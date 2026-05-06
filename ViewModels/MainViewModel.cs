@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using QueueManager.Helpers;
 using QueueManager.Models;
+using System.Windows.Data;
 
 namespace QueueManager.ViewModels
 {
@@ -29,6 +30,8 @@ namespace QueueManager.ViewModels
         private DateTime? _termin;
 
         private IList _selectedTasks = new ArrayList();
+        private string _searchText = string.Empty;
+        private QueueTaskStatus? _selectedStatusFilter;
 
         public ObservableCollection<QueueTask> Tasks { get; set; } = new();
 
@@ -127,13 +130,70 @@ namespace QueueManager.ViewModels
         public ICommand DeleteTaskCommand { get; }
         public ICommand UpdateTaskCommand { get; }
 
+        public ICollectionView TasksView { get; }
+
+        public Array StatusFilterOptions => Enum.GetValues(typeof(QueueTaskStatus));
+
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (SetField(ref _searchText, value))
+                    TasksView.Refresh();
+            }
+        }
+
+        public QueueTaskStatus? SelectedStatusFilter
+        {
+            get => _selectedStatusFilter;
+            set
+            {
+                if (SetField(ref _selectedStatusFilter, value))
+                    TasksView.Refresh();
+            }
+        }
+
+        public ICommand ClearFiltersCommand { get; }
+
+
         public MainViewModel()
         {
             Id = _nextId;
 
+            TasksView = CollectionViewSource.GetDefaultView(Tasks);
+            TasksView.Filter = FilterTasks;
+
             AddTaskCommand = new RelayCommand(AddTask, CanAddTask);
             DeleteTaskCommand = new RelayCommand(DeleteTasks, CanDeleteTasks);
             UpdateTaskCommand = new RelayCommand(UpdateTask, CanUpdateTask);
+            ClearFiltersCommand = new RelayCommand(ClearFilters);
+        }
+
+        private bool FilterTasks(object obj)
+        {
+            if (obj is not QueueTask task)
+                return false;
+
+            bool matchesSearch =
+                string.IsNullOrWhiteSpace(SearchText)
+                || task.Nazwa.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                || task.Opis.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                || task.Autor.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                || task.OsobaPrzypisana.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+
+            bool matchesStatus =
+                SelectedStatusFilter == null
+                || task.Status == SelectedStatusFilter;
+
+            return matchesSearch && matchesStatus;
+        }
+
+        private void ClearFilters()
+        {
+            SearchText = string.Empty;
+            SelectedStatusFilter = null;
+            TasksView.Refresh();
         }
 
         private void AddTask()

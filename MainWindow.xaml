@@ -72,27 +72,49 @@
             Height="35"/>
         </StackPanel>
 
-        <DataGrid x:Name="TasksDataGrid"
-          Grid.Column="2"
-          ItemsSource="{Binding Tasks}"
-          AutoGenerateColumns="False"
-          IsReadOnly="True"
-          SelectionMode="Extended"
-          SelectionUnit="FullRow"
-          SelectionChanged="TasksDataGrid_SelectionChanged">
+        <DockPanel Grid.Column="2">
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
-                <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
-                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" />
-                <DataGridTextColumn Header="Priorytet" Binding="{Binding Priorytet}" />
-                <DataGridTextColumn Header="Autor" Binding="{Binding Autor}" />
-                <DataGridTextColumn Header="Przypisana" Binding="{Binding OsobaPrzypisana}" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
-                <DataGridTextColumn Header="Data utworzenia" Binding="{Binding DataUtworzenia}" />
-                <DataGridTextColumn Header="Przewidziany czas" Binding="{Binding PrzewidzianyCzas}" />
-                <DataGridTextColumn Header="Termin" Binding="{Binding Termin}" />
-            </DataGrid.Columns>
-        </DataGrid>
+            <StackPanel DockPanel.Dock="Top"
+                Orientation="Horizontal"
+                Margin="0,0,0,10">
+
+                <TextBox Width="250"
+                 Margin="0,0,10,0"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Szukaj po nazwie, opisie, autorze lub osobie przypisanej"/>
+
+                <ComboBox Width="160"
+                  Margin="0,0,10,0"
+                  ItemsSource="{Binding StatusFilterOptions}"
+                  SelectedItem="{Binding SelectedStatusFilter}"/>
+
+                <Button Content="Wyczyść filtry"
+                Command="{Binding ClearFiltersCommand}"
+                Width="120"/>
+            </StackPanel>
+
+            <DataGrid x:Name="TasksDataGrid"
+              ItemsSource="{Binding TasksView}"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              SelectionMode="Extended"
+              SelectionUnit="FullRow"
+              SelectionChanged="TasksDataGrid_SelectionChanged">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" />
+                    <DataGridTextColumn Header="Priorytet" Binding="{Binding Priorytet}" />
+                    <DataGridTextColumn Header="Autor" Binding="{Binding Autor}" />
+                    <DataGridTextColumn Header="Przypisana" Binding="{Binding OsobaPrzypisana}" />
+                    <DataGridTextColumn Header="Status"
+                                Binding="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}" />
+                    <DataGridTextColumn Header="Data utworzenia" Binding="{Binding DataUtworzenia}" />
+                    <DataGridTextColumn Header="Przewidziany czas" Binding="{Binding PrzewidzianyCzas}" />
+                    <DataGridTextColumn Header="Termin" Binding="{Binding Termin}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
     </Grid>
 </Window>
