@@ -3,8 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:QueueManager.Converters"
         mc:Ignorable="d"
         Title="Queue Manager" Height="600" Width="1000">
+
+    <Window.Resources>
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+    </Window.Resources>
+
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -17,7 +23,7 @@
             <TextBlock Text="Dodaj zadanie" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
             <TextBlock Text="Id"/>
-            <TextBox Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+            <TextBox Text="{Binding Id}" IsReadOnly="True" Margin="0,0,0,8"/>
 
             <TextBlock Text="Nazwa"/>
             <TextBox Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
@@ -33,6 +39,17 @@
 
             <TextBlock Text="Osoba przypisana"/>
             <TextBox Text="{Binding OsobaPrzypisana, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+            <TextBlock Text="Status"/>
+            <ComboBox ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding Status}" Margin="0,0,0,8">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+            </ComboBox>
 
             <TextBlock Text="Przewidziany czas (hh:mm:ss)"/>
             <TextBox Text="{Binding PrzewidzianyCzas, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>

@@ -6,9 +6,16 @@ namespace QueueManager.Models
 {
     public enum QueueTaskStatus
     {
+        [Description("Nowe")]
         Nowe,
+
+        [Description("W trakcie")]
         WTrakcie,
+
+        [Description("Zakończone")]
         Zakonczone,
+
+        [Description("Anulowane")]
         Anulowane
     }
 

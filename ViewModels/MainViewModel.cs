@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using QueueManager.Helpers;
 using QueueManager.Models;
@@ -12,6 +13,8 @@ namespace QueueManager.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private int _nextId = 1;
+
         private int _id;
         private string _nazwa = string.Empty;
         private string _opis = string.Empty;
@@ -29,6 +32,8 @@ namespace QueueManager.ViewModels
 
         public ObservableCollection<QueueTask> Tasks { get; set; } = new();
 
+        public Array StatusOptions => Enum.GetValues(typeof(QueueTaskStatus));
+
         public int Id
         {
             get => _id;
@@ -38,7 +43,11 @@ namespace QueueManager.ViewModels
         public string Nazwa
         {
             get => _nazwa;
-            set => SetField(ref _nazwa, value);
+            set
+            {
+                if (SetField(ref _nazwa, value))
+                    CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public string Opis
@@ -120,7 +129,9 @@ namespace QueueManager.ViewModels
 
         public MainViewModel()
         {
-            AddTaskCommand = new RelayCommand(AddTask);
+            Id = _nextId;
+
+            AddTaskCommand = new RelayCommand(AddTask, CanAddTask);
             DeleteTaskCommand = new RelayCommand(DeleteTasks, CanDeleteTasks);
             UpdateTaskCommand = new RelayCommand(UpdateTask, CanUpdateTask);
         }
@@ -129,13 +140,13 @@ namespace QueueManager.ViewModels
         {
             var task = new QueueTask
             {
-                Id = Id,
-                Nazwa = Nazwa,
+                Id = _nextId++,
+                Nazwa = Nazwa.Trim(),
                 Opis = Opis,
                 Priorytet = Priorytet,
                 Autor = Autor,
                 OsobaPrzypisana = OsobaPrzypisana,
-                DataUtworzenia = DataUtworzenia,
+                DataUtworzenia = DateTime.Now,
                 DataRozpoczecia = DataRozpoczecia,
                 DataUkonczenia = DataUkonczenia,
                 Status = Status,
@@ -147,8 +158,27 @@ namespace QueueManager.ViewModels
             ClearForm();
         }
 
+        private bool CanAddTask()
+        {
+            return !string.IsNullOrWhiteSpace(Nazwa)
+                   && Priorytet >= 1
+                   && Priorytet <= 10;
+        }
+
         private void DeleteTasks()
         {
+            if (SelectedTasks == null || SelectedTasks.Count == 0)
+                return;
+
+            var result = MessageBox.Show(
+                $"Czy na pewno chcesz usunąć zaznaczone zadania: {SelectedTasks.Count}?",
+                "Potwierdzenie usunięcia",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
             var tasksToDelete = SelectedTasks.Cast<QueueTask>().ToList();
 
             foreach (var task in tasksToDelete)
@@ -157,6 +187,7 @@ namespace QueueManager.ViewModels
             }
 
             SelectedTasks = new ArrayList();
+            ClearForm();
         }
 
         private bool CanDeleteTasks()
@@ -194,8 +225,10 @@ namespace QueueManager.ViewModels
             if (SelectedTasks[0] is not QueueTask task)
                 return;
 
-            task.Id = Id;
-            task.Nazwa = Nazwa;
+            if (string.IsNullOrWhiteSpace(Nazwa))
+                return;
+
+            task.Nazwa = Nazwa.Trim();
             task.Opis = Opis;
             task.Priorytet = Priorytet;
             task.Autor = Autor;
@@ -212,12 +245,16 @@ namespace QueueManager.ViewModels
 
         private bool CanUpdateTask()
         {
-            return SelectedTasks != null && SelectedTasks.Count == 1;
+            return SelectedTasks != null
+                   && SelectedTasks.Count == 1
+                   && !string.IsNullOrWhiteSpace(Nazwa)
+                   && Priorytet >= 1
+                   && Priorytet <= 10;
         }
 
         private void ClearForm()
         {
-            Id = 0;
+            Id = _nextId;
             Nazwa = string.Empty;
             Opis = string.Empty;
             Priorytet = 1;
