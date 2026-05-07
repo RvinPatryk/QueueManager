@@ -7,114 +7,158 @@
         mc:Ignorable="d"
         Title="Queue Manager" Height="600" Width="1000">
 
-    <Window.Resources>
-        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
-    </Window.Resources>
+	<Window.Resources>
+		<converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+	</Window.Resources>
 
+	<Grid Margin="10">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="350"/>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
 
-    <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+		<StackPanel Grid.Column="0">
+			<TextBlock Text="Dodaj zadanie" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
-        <StackPanel Grid.Column="0">
-            <TextBlock Text="Dodaj zadanie" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+			<TextBlock Text="Id"/>
+			<TextBox Text="{Binding Id}" IsReadOnly="True" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Id"/>
-            <TextBox Text="{Binding Id}" IsReadOnly="True" Margin="0,0,0,8"/>
+			<TextBlock Text="Nazwa"/>
+			<TextBox Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Nazwa"/>
-            <TextBox Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+			<TextBlock Text="Opis"/>
+			<TextBox Text="{Binding Opis, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Opis"/>
-            <TextBox Text="{Binding Opis, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+			<TextBlock Text="Priorytet"/>
+			<TextBox Text="{Binding Priorytet, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Priorytet"/>
-            <TextBox Text="{Binding Priorytet, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+			<TextBlock Text="Autor"/>
+			<TextBox Text="{Binding Autor, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Autor"/>
-            <TextBox Text="{Binding Autor, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+			<TextBlock Text="Osoba przypisana"/>
+			<TextBox Text="{Binding OsobaPrzypisana, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Osoba przypisana"/>
-            <TextBox Text="{Binding OsobaPrzypisana, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+			<TextBlock Text="Status"/>
+			<ComboBox ItemsSource="{Binding StatusOptions}"
+                      SelectedItem="{Binding Status}"
+                      Margin="0,0,0,8">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
 
-            <TextBlock Text="Status"/>
-            <ComboBox ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding Status}" Margin="0,0,0,8">
+			<TextBlock Text="Przewidziany czas (hh:mm:ss)"/>
+			<TextBox Text="{Binding PrzewidzianyCzas, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
+			<TextBlock Text="Termin"/>
+			<DatePicker SelectedDate="{Binding Termin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
 
-            </ComboBox>
+			<Button Content="Dodaj zadanie"
+                    Command="{Binding AddTaskCommand}"
+                    Height="35"
+                    Margin="0,0,0,8"/>
 
-            <TextBlock Text="Przewidziany czas (hh:mm:ss)"/>
-            <TextBox Text="{Binding PrzewidzianyCzas, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+			<Button Content="Zapisz zmiany"
+                    Command="{Binding UpdateTaskCommand}"
+                    Height="35"
+                    Margin="0,0,0,8"/>
 
-            <TextBlock Text="Termin"/>
-            <DatePicker SelectedDate="{Binding Termin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+			<Button Content="Usuń zaznaczone"
+                    Command="{Binding DeleteTaskCommand}"
+                    Height="35"/>
+		</StackPanel>
 
-            <Button Content="Dodaj zadanie"
-            Command="{Binding AddTaskCommand}"
-            Height="35"
-            Margin="0,0,0,8"/>
+		<DockPanel Grid.Column="2">
 
-            <Button Content="Zapisz zmiany"
-            Command="{Binding UpdateTaskCommand}"
-            Height="35"
-            Margin="0,0,0,8"/>
+			<!-- Filtry -->
+			<StackPanel DockPanel.Dock="Top"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10">
 
-            <Button Content="Usuń zaznaczone"
-            Command="{Binding DeleteTaskCommand}"
-            Height="35"/>
-        </StackPanel>
+				<TextBox Width="250"
+                         Margin="0,0,10,0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Szukaj po nazwie, opisie, autorze lub osobie przypisanej"/>
 
-        <DockPanel Grid.Column="2">
+				<ComboBox Width="160"
+                          Margin="0,0,10,0"
+                          ItemsSource="{Binding StatusFilterOptions}"
+                          SelectedItem="{Binding SelectedStatusFilter}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 
-            <StackPanel DockPanel.Dock="Top"
-                Orientation="Horizontal"
-                Margin="0,0,0,10">
+				<Button Content="Wyczyść filtry"
+                        Command="{Binding ClearFiltersCommand}"
+                        Width="120"/>
+			</StackPanel>
 
-                <TextBox Width="250"
-                 Margin="0,0,10,0"
-                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                 ToolTip="Szukaj po nazwie, opisie, autorze lub osobie przypisanej"/>
+			<!-- Panel strategii kolejki -->
+			<StackPanel DockPanel.Dock="Top"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10">
 
-                <ComboBox Width="160"
-                  Margin="0,0,10,0"
-                  ItemsSource="{Binding StatusFilterOptions}"
-                  SelectedItem="{Binding SelectedStatusFilter}"/>
+				<TextBlock Text="Algorytm:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
 
-                <Button Content="Wyczyść filtry"
-                Command="{Binding ClearFiltersCommand}"
-                Width="120"/>
-            </StackPanel>
+				<ComboBox Width="160"
+                          Margin="0,0,10,0"
+                          ItemsSource="{Binding AlgorithmOptions}"
+                          SelectedItem="{Binding SelectedAlgorithm}"/>
 
-            <DataGrid x:Name="TasksDataGrid"
-              ItemsSource="{Binding TasksView}"
-              AutoGenerateColumns="False"
-              IsReadOnly="True"
-              SelectionMode="Extended"
-              SelectionUnit="FullRow"
-              SelectionChanged="TasksDataGrid_SelectionChanged">
+				<Button Content="Wybierz następne"
+                        Command="{Binding SelectNextTaskCommand}"
+                        Width="130"
+                        Margin="0,0,10,0"/>
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
-                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
-                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" />
-                    <DataGridTextColumn Header="Priorytet" Binding="{Binding Priorytet}" />
-                    <DataGridTextColumn Header="Autor" Binding="{Binding Autor}" />
-                    <DataGridTextColumn Header="Przypisana" Binding="{Binding OsobaPrzypisana}" />
-                    <DataGridTextColumn Header="Status"
-                                Binding="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}" />
-                    <DataGridTextColumn Header="Data utworzenia" Binding="{Binding DataUtworzenia}" />
-                    <DataGridTextColumn Header="Przewidziany czas" Binding="{Binding PrzewidzianyCzas}" />
-                    <DataGridTextColumn Header="Termin" Binding="{Binding Termin}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </DockPanel>
-    </Grid>
+				<Button Content="Przetwórz"
+                        Command="{Binding StartNextTaskCommand}"
+                        Width="100"
+                        Margin="0,0,10,0"/>
+
+				<TextBlock Text="Następne:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0"/>
+
+				<TextBlock Text="{Binding NextTask.Nazwa, TargetNullValue='brak'}"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"/>
+			</StackPanel>
+
+			<!-- Lista zadań -->
+			<DataGrid x:Name="TasksDataGrid"
+                      ItemsSource="{Binding TasksView}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Extended"
+                      SelectionUnit="FullRow"
+                      SelectionChanged="TasksDataGrid_SelectionChanged"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      CanUserResizeColumns="True"
+                      CanUserSortColumns="True">
+
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+					<DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
+					<DataGridTextColumn Header="Opis" Binding="{Binding Opis}" />
+					<DataGridTextColumn Header="Priorytet" Binding="{Binding Priorytet}" />
+					<DataGridTextColumn Header="Autor" Binding="{Binding Autor}" />
+					<DataGridTextColumn Header="Przypisana" Binding="{Binding OsobaPrzypisana}" />
+					<DataGridTextColumn Header="Status"
+                                        Binding="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}" />
+					<DataGridTextColumn Header="Data utworzenia" Binding="{Binding DataUtworzenia}" />
+					<DataGridTextColumn Header="Przewidziany czas" Binding="{Binding PrzewidzianyCzas}" />
+					<DataGridTextColumn Header="Termin" Binding="{Binding Termin}" />
+				</DataGrid.Columns>
+			</DataGrid>
+		</DockPanel>
+	</Grid>
 </Window>

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using QueueManager.Helpers;
 using QueueManager.Models;
 using System.Windows.Data;
+using QueueManager.Services;
 
 namespace QueueManager.ViewModels
 {
@@ -168,6 +169,9 @@ namespace QueueManager.ViewModels
             DeleteTaskCommand = new RelayCommand(DeleteTasks, CanDeleteTasks);
             UpdateTaskCommand = new RelayCommand(UpdateTask, CanUpdateTask);
             ClearFiltersCommand = new RelayCommand(ClearFilters);
+
+            SelectNextTaskCommand = new RelayCommand(SelectNextTask, CanSelectNextTask);
+            StartNextTaskCommand = new RelayCommand(StartNextTask, CanStartNextTask);
         }
 
         private bool FilterTasks(object obj)
@@ -216,6 +220,8 @@ namespace QueueManager.ViewModels
 
             Tasks.Add(task);
             ClearForm();
+            TasksView.Refresh();
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private bool CanAddTask()
@@ -248,6 +254,9 @@ namespace QueueManager.ViewModels
 
             SelectedTasks = new ArrayList();
             ClearForm();
+            NextTask = null;
+            TasksView.Refresh();
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private bool CanDeleteTasks()
@@ -301,6 +310,8 @@ namespace QueueManager.ViewModels
             task.Termin = Termin;
 
             ClearForm();
+            TasksView.Refresh();
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private bool CanUpdateTask()
@@ -343,6 +354,60 @@ namespace QueueManager.ViewModels
             field = value;
             OnPropertyChanged(name);
             return true;
+        }
+        
+        private readonly TaskSchedulerService _schedulerService = new();
+
+        private SchedulingAlgorithm _selectedAlgorithm = SchedulingAlgorithm.FIFO;
+        private QueueTask? _nextTask;
+
+        public Array AlgorithmOptions => Enum.GetValues(typeof(SchedulingAlgorithm));
+
+        public SchedulingAlgorithm SelectedAlgorithm
+        {
+            get => _selectedAlgorithm;
+            set => SetField(ref _selectedAlgorithm, value);
+        }
+
+        public QueueTask? NextTask
+        {
+            get => _nextTask;
+            set => SetField(ref _nextTask, value);
+        }
+
+        public ICommand SelectNextTaskCommand { get; }
+        public ICommand StartNextTaskCommand { get; }
+
+        private void SelectNextTask()
+        {
+            NextTask = _schedulerService.GetNextTask(Tasks, SelectedAlgorithm);
+
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private bool CanSelectNextTask()
+        {
+            return Tasks.Any(t => t.Status == QueueTaskStatus.Nowe);
+        }
+
+        private void StartNextTask()
+        {
+            if (NextTask == null)
+                return;
+
+            NextTask.Status = QueueTaskStatus.WTrakcie;
+            NextTask.DataRozpoczecia = DateTime.Now;
+
+            TasksView.Refresh();
+
+            NextTask = null;
+
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private bool CanStartNextTask()
+        {
+            return NextTask != null && NextTask.Status == QueueTaskStatus.Nowe;
         }
     }
 }
