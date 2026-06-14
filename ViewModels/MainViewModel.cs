@@ -203,61 +203,78 @@ namespace QueueManager.ViewModels
 
         private void AddTask()
         {
-            var task = new QueueTask
+            try
             {
-                Id = _nextId++,
-                Nazwa = Nazwa.Trim(),
-                Opis = Opis,
-                Priorytet = Priorytet,
-                Autor = Autor,
-                OsobaPrzypisana = OsobaPrzypisana,
-                DataUtworzenia = DateTime.Now,
-                DataRozpoczecia = DataRozpoczecia,
-                DataUkonczenia = DataUkonczenia,
-                Status = Status,
-                PrzewidzianyCzas = PrzewidzianyCzas,
-                Termin = Termin
-            };
+                if (!ValidateTaskForm())
+                    return;
+                var task = new QueueTask
+                {
+                    Id = _nextId++,
+                    Nazwa = Nazwa.Trim(),
+                    Opis = Opis,
+                    Priorytet = Priorytet,
+                    Autor = Autor,
+                    OsobaPrzypisana = OsobaPrzypisana,
+                    DataUtworzenia = DateTime.Now,
+                    DataRozpoczecia = DataRozpoczecia,
+                    DataUkonczenia = DataUkonczenia,
+                    Status = Status,
+                    PrzewidzianyCzas = PrzewidzianyCzas,
+                    Termin = Termin
+                };
 
-            Tasks.Add(task);
-            ClearForm();
-            TasksView.Refresh();
-            CommandManager.InvalidateRequerySuggested();
+                Tasks.Add(task);
+                ClearForm();
+                TasksView.Refresh();
+                CommandManager.InvalidateRequerySuggested();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się dodać zadania.\n\nSzczegóły: {ex.Message}");
+            }
         }
 
         private bool CanAddTask()
         {
             return !string.IsNullOrWhiteSpace(Nazwa)
                    && Priorytet >= 1
-                   && Priorytet <= 10;
+                   && Priorytet <= 10
+                   && PrzewidzianyCzas > TimeSpan.Zero;
         }
 
         private void DeleteTasks()
         {
-            if (SelectedTasks == null || SelectedTasks.Count == 0)
-                return;
-
-            var result = MessageBox.Show(
-                $"Czy na pewno chcesz usunąć zaznaczone zadania: {SelectedTasks.Count}?",
-                "Potwierdzenie usunięcia",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result != MessageBoxResult.Yes)
-                return;
-
-            var tasksToDelete = SelectedTasks.Cast<QueueTask>().ToList();
-
-            foreach (var task in tasksToDelete)
+            try
             {
-                Tasks.Remove(task);
-            }
+                if (SelectedTasks == null || SelectedTasks.Count == 0)
+                    return;
 
-            SelectedTasks = new ArrayList();
-            ClearForm();
-            NextTask = null;
-            TasksView.Refresh();
-            CommandManager.InvalidateRequerySuggested();
+                var result = MessageBox.Show(
+                    $"Czy na pewno chcesz usunąć zaznaczone zadania: {SelectedTasks.Count}?",
+                    "Potwierdzenie usunięcia",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.Yes)
+                    return;
+
+                var tasksToDelete = SelectedTasks.Cast<QueueTask>().ToList();
+
+                foreach (var task in tasksToDelete)
+                {
+                    Tasks.Remove(task);
+                }
+
+                SelectedTasks = new ArrayList();
+                ClearForm();
+                NextTask = null;
+                TasksView.Refresh();
+                CommandManager.InvalidateRequerySuggested();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się usunąć zadań.\n\nSzczegóły: {ex.Message}");
+            }
         }
 
         private bool CanDeleteTasks()
@@ -289,30 +306,37 @@ namespace QueueManager.ViewModels
 
         private void UpdateTask()
         {
-            if (SelectedTasks == null || SelectedTasks.Count != 1)
-                return;
+            try
+            {
+                if (SelectedTasks == null || SelectedTasks.Count != 1)
+                    return;
 
-            if (SelectedTasks[0] is not QueueTask task)
-                return;
+                if (SelectedTasks[0] is not QueueTask task)
+                    return;
 
-            if (string.IsNullOrWhiteSpace(Nazwa))
-                return;
+                if (string.IsNullOrWhiteSpace(Nazwa))
+                    return;
 
-            task.Nazwa = Nazwa.Trim();
-            task.Opis = Opis;
-            task.Priorytet = Priorytet;
-            task.Autor = Autor;
-            task.OsobaPrzypisana = OsobaPrzypisana;
-            task.DataUtworzenia = DataUtworzenia;
-            task.DataRozpoczecia = DataRozpoczecia;
-            task.DataUkonczenia = DataUkonczenia;
-            task.Status = Status;
-            task.PrzewidzianyCzas = PrzewidzianyCzas;
-            task.Termin = Termin;
+                task.Nazwa = Nazwa.Trim();
+                task.Opis = Opis;
+                task.Priorytet = Priorytet;
+                task.Autor = Autor;
+                task.OsobaPrzypisana = OsobaPrzypisana;
+                task.DataUtworzenia = DataUtworzenia;
+                task.DataRozpoczecia = DataRozpoczecia;
+                task.DataUkonczenia = DataUkonczenia;
+                task.Status = Status;
+                task.PrzewidzianyCzas = PrzewidzianyCzas;
+                task.Termin = Termin;
 
-            ClearForm();
-            TasksView.Refresh();
-            CommandManager.InvalidateRequerySuggested();
+                ClearForm();
+                TasksView.Refresh();
+                CommandManager.InvalidateRequerySuggested();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się zaktualizować zadania.\n\nSzczegóły: {ex.Message}");
+            }
         }
 
         private bool CanUpdateTask()
@@ -321,7 +345,8 @@ namespace QueueManager.ViewModels
                    && SelectedTasks.Count == 1
                    && !string.IsNullOrWhiteSpace(Nazwa)
                    && Priorytet >= 1
-                   && Priorytet <= 10;
+                   && Priorytet <= 10
+                   && PrzewidzianyCzas > TimeSpan.Zero;
         }
 
         private void ClearForm()
@@ -389,9 +414,18 @@ namespace QueueManager.ViewModels
 
         private void SelectNextTask()
         {
-            NextTask = _schedulerService.GetNextTask(Tasks, SelectedAlgorithm);
+            try
+            {
+                NextTask = _schedulerService.GetNextTask(Tasks, SelectedAlgorithm);
 
-            CommandManager.InvalidateRequerySuggested();
+                if (NextTask == null)
+                    MessageHelper.ShowInfo("Brak nowych zadań do wyboru.");
+
+                CommandManager.InvalidateRequerySuggested();
+            } catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się wybrać następnego zadania.\n\nSzczegóły: {ex.Message}");
+            }
         }
 
         private bool CanSelectNextTask()
@@ -401,17 +435,32 @@ namespace QueueManager.ViewModels
 
         private void StartNextTask()
         {
-            if (NextTask == null)
-                return;
+            try
+            {
+                if (NextTask == null)
+                {
+                    MessageHelper.ShowError("Nie wybrano zadania do rozpoczęcia.");
+                    return;
+                }
 
-            NextTask.Status = QueueTaskStatus.WTrakcie;
-            NextTask.DataRozpoczecia = DateTime.Now;
+                if (NextTask.Status != QueueTaskStatus.Nowe)
+                {
+                    MessageHelper.ShowError("Można rozpocząć tylko zadanie ze statusem Nowe.");
+                    return;
+                }
 
-            TasksView.Refresh();
+                NextTask.Status = QueueTaskStatus.WTrakcie;
+                NextTask.DataRozpoczecia = DateTime.Now;
 
-            NextTask = null;
+                NextTask = null;
 
-            CommandManager.InvalidateRequerySuggested();
+                TasksView.Refresh();
+                CommandManager.InvalidateRequerySuggested();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się rozpocząć zadania.\n\nSzczegóły: {ex.Message}");
+            }
         }
 
         private bool CanStartNextTask()
@@ -421,28 +470,70 @@ namespace QueueManager.ViewModels
 
         private void FinishSelectedTasks()
         {
-            if (SelectedTasks == null || SelectedTasks.Count == 0)
-                return;
-
-            var tasksToFinish = SelectedTasks
-                .Cast<QueueTask>()
-                .Where(t => t.Status == QueueTaskStatus.WTrakcie)
-                .ToList();
-
-            foreach (var task in tasksToFinish)
+            try
             {
-                task.Status = QueueTaskStatus.Zakonczone;
-                task.DataUkonczenia = DateTime.Now;
-            }
+                if (SelectedTasks == null || SelectedTasks.Count == 0)
+                    return;
 
-            TasksView.Refresh();
-            CommandManager.InvalidateRequerySuggested();
+                var tasksToFinish = SelectedTasks
+                    .Cast<QueueTask>()
+                    .Where(t => t.Status == QueueTaskStatus.WTrakcie)
+                    .ToList();
+
+                if (tasksToFinish.Count == 0)
+                {
+                    MessageHelper.ShowInfo("Zaznaczone zadania nie są w statusie W trakcie.");
+                    return;
+                }
+
+                foreach (var task in tasksToFinish)
+                {
+                    task.Status = QueueTaskStatus.Zakonczone;
+                    task.DataUkonczenia = DateTime.Now;
+                }
+
+                TasksView.Refresh();
+                CommandManager.InvalidateRequerySuggested();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się zakończyć zadania.\n\nSzczegóły: {ex.Message}");
+            }
         }
 
         private bool CanFinishSelectedTasks()
         {
             return SelectedTasks != null
                    && SelectedTasks.Cast<QueueTask>().Any(t => t.Status == QueueTaskStatus.WTrakcie);
+        }
+
+        private bool ValidateTaskForm()
+        {
+            if (string.IsNullOrWhiteSpace(Nazwa))
+            {
+                MessageHelper.ShowError("Nazwa zadania nie może być pusta.");
+                return false;
+            }
+
+            if (Priorytet < 1 || Priorytet > 10)
+            {
+                MessageHelper.ShowError("Priorytet musi być w zakresie 1-10.");
+                return false;
+            }
+
+            if (PrzewidzianyCzas <= TimeSpan.Zero)
+            {
+                MessageHelper.ShowError("Przewidziany czas musi być większy od zera.");
+                return false;
+            }
+
+            if (Termin.HasValue && Termin.Value.Date < DateTime.Today)
+            {
+                MessageHelper.ShowError("Termin nie może być wcześniejszy niż dzisiejsza data.");
+                return false;
+            }
+
+            return true;
         }
     }
 }
