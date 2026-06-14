@@ -172,6 +172,7 @@ namespace QueueManager.ViewModels
 
             SelectNextTaskCommand = new RelayCommand(SelectNextTask, CanSelectNextTask);
             StartNextTaskCommand = new RelayCommand(StartNextTask, CanStartNextTask);
+            FinishSelectedTasksCommand = new RelayCommand(FinishSelectedTasks, CanFinishSelectedTasks);
         }
 
         private bool FilterTasks(object obj)
@@ -366,7 +367,14 @@ namespace QueueManager.ViewModels
         public SchedulingAlgorithm SelectedAlgorithm
         {
             get => _selectedAlgorithm;
-            set => SetField(ref _selectedAlgorithm, value);
+            set
+            {
+                if (SetField(ref _selectedAlgorithm, value))
+                {
+                    NextTask = null;
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         public QueueTask? NextTask
@@ -377,6 +385,7 @@ namespace QueueManager.ViewModels
 
         public ICommand SelectNextTaskCommand { get; }
         public ICommand StartNextTaskCommand { get; }
+        public ICommand FinishSelectedTasksCommand { get; }
 
         private void SelectNextTask()
         {
@@ -408,6 +417,32 @@ namespace QueueManager.ViewModels
         private bool CanStartNextTask()
         {
             return NextTask != null && NextTask.Status == QueueTaskStatus.Nowe;
+        }
+
+        private void FinishSelectedTasks()
+        {
+            if (SelectedTasks == null || SelectedTasks.Count == 0)
+                return;
+
+            var tasksToFinish = SelectedTasks
+                .Cast<QueueTask>()
+                .Where(t => t.Status == QueueTaskStatus.WTrakcie)
+                .ToList();
+
+            foreach (var task in tasksToFinish)
+            {
+                task.Status = QueueTaskStatus.Zakonczone;
+                task.DataUkonczenia = DateTime.Now;
+            }
+
+            TasksView.Refresh();
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private bool CanFinishSelectedTasks()
+        {
+            return SelectedTasks != null
+                   && SelectedTasks.Cast<QueueTask>().Any(t => t.Status == QueueTaskStatus.WTrakcie);
         }
     }
 }
