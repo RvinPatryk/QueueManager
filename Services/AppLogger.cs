@@ -6,8 +6,12 @@ namespace QueueManager.Services
     public static class AppLogger
     {
         private static readonly object _lock = new();
-        private static readonly string _logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-        private static readonly string _logFilePath = Path.Combine(_logDirectory, "app-log.txt");
+
+        private static readonly string _logDirectory =
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+
+        private static readonly string _logFilePath =
+            Path.Combine(_logDirectory, "app-log.txt");
 
         public static void Info(string message)
         {
@@ -27,6 +31,42 @@ namespace QueueManager.Services
         public static void Error(string message, Exception exception)
         {
             WriteLog("ERROR", $"{message} | Exception: {exception.Message}");
+        }
+
+        public static string ReadAll()
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    if (!File.Exists(_logFilePath))
+                        return "Brak logów.";
+
+                    return File.ReadAllText(_logFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Nie udało się odczytać logów. Szczegóły: {ex.Message}";
+            }
+        }
+
+        public static void Clear()
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    if (!Directory.Exists(_logDirectory))
+                        Directory.CreateDirectory(_logDirectory);
+
+                    File.WriteAllText(_logFilePath, string.Empty);
+                }
+            }
+            catch
+            {
+                // Nie wywalamy aplikacji, jeśli czyszczenie logu się nie uda.
+            }
         }
 
         private static void WriteLog(string level, string message)

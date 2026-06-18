@@ -10,6 +10,8 @@ using QueueManager.Helpers;
 using QueueManager.Models;
 using System.Windows.Data;
 using QueueManager.Services;
+using QueueManager.Views;
+
 
 namespace QueueManager.ViewModels
 {
@@ -130,6 +132,7 @@ namespace QueueManager.ViewModels
         public ICommand AddTaskCommand { get; }
         public ICommand DeleteTaskCommand { get; }
         public ICommand UpdateTaskCommand { get; }
+        public ICommand ShowLogsCommand { get; }
 
         public ICollectionView TasksView { get; }
 
@@ -173,6 +176,7 @@ namespace QueueManager.ViewModels
             SelectNextTaskCommand = new RelayCommand(SelectNextTask, CanSelectNextTask);
             StartNextTaskCommand = new RelayCommand(StartNextTask, CanStartNextTask);
             FinishSelectedTasksCommand = new RelayCommand(FinishSelectedTasks, CanFinishSelectedTasks);
+            ShowLogsCommand = new RelayCommand(ShowLogs);
         }
 
         private bool FilterTasks(object obj)
@@ -609,6 +613,20 @@ namespace QueueManager.ViewModels
             OnPropertyChanged(nameof(NearestDeadline));
         }
 
+        private void ShowLogs()
+        {
+            try
+            {
+                string logs = AppLogger.ReadAll();
+
+                var logWindow = new LogWindow(logs);
+                logWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowError($"Nie udało się wyświetlić logów.\n\nSzczegóły: {ex.Message}");
+            }
+        }
 
 
     }
