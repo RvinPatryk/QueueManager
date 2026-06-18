@@ -74,6 +74,9 @@
 			<Button Content="Pokaż logi"
 					Command="{Binding ShowLogsCommand}"
 					Height="35"/>
+			<Button Content="Eksportuj CSV"
+        Command="{Binding ExportTasksCommand}"
+        Height="35"/>
 		</StackPanel>
 
 		

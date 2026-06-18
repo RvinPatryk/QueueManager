@@ -11,6 +11,7 @@ using QueueManager.Models;
 using System.Windows.Data;
 using QueueManager.Services;
 using QueueManager.Views;
+using Microsoft.Win32;
 
 
 namespace QueueManager.ViewModels
@@ -177,6 +178,7 @@ namespace QueueManager.ViewModels
             StartNextTaskCommand = new RelayCommand(StartNextTask, CanStartNextTask);
             FinishSelectedTasksCommand = new RelayCommand(FinishSelectedTasks, CanFinishSelectedTasks);
             ShowLogsCommand = new RelayCommand(ShowLogs);
+            ExportTasksCommand = new RelayCommand(ExportTasks, CanExportTasks);
         }
 
         private bool FilterTasks(object obj)
@@ -398,6 +400,8 @@ namespace QueueManager.ViewModels
         
         private readonly TaskSchedulerService _schedulerService = new();
 
+        private readonly TaskExportService _taskExportService = new();
+
         private SchedulingAlgorithm _selectedAlgorithm = SchedulingAlgorithm.FIFO;
         private QueueTask? _nextTask;
 
@@ -425,6 +429,7 @@ namespace QueueManager.ViewModels
         public ICommand SelectNextTaskCommand { get; }
         public ICommand StartNextTaskCommand { get; }
         public ICommand FinishSelectedTasksCommand { get; }
+        public ICommand ExportTasksCommand { get; }
 
         private void SelectNextTask()
         {
@@ -628,6 +633,38 @@ namespace QueueManager.ViewModels
             }
         }
 
+        private void ExportTasks()
+        {
+            try
+            {
+                var dialog = new SaveFileDialog
+                {
+                    Title = "Eksport zadań do CSV",
+                    Filter = "CSV files (.csv)|.csv",
+                    FileName = $"zadania_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+                };
+
+                bool? result = dialog.ShowDialog();
+
+                if (result != true)
+                    return;
+
+                _taskExportService.ExportToCsv(Tasks, dialog.FileName);
+
+                AppLogger.Info($"Wyeksportowano zadania do pliku: {dialog.FileName}");
+                MessageHelper.ShowInfo("Eksport zadań zakończony pomyślnie.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error("Błąd podczas eksportu zadań.", ex);
+                MessageHelper.ShowError($"Nie udało się wyeksportować zadań.\n\nSzczegóły: {ex.Message}");
+            }
+        }
+
+        private bool CanExportTasks()
+        {
+            return Tasks.Count > 0;
+        }
 
     }
 }
