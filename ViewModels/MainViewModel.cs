@@ -224,6 +224,7 @@ namespace QueueManager.ViewModels
                 };
 
                 Tasks.Add(task);
+                AppLogger.Info($"Dodano zadanie ID={task.Id}, Nazwa='{task.Nazwa}', Priorytet={task.Priorytet}, Status={task.Status}.");
                 ClearForm();
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
@@ -231,6 +232,7 @@ namespace QueueManager.ViewModels
             }
             catch (Exception ex)
             {
+                AppLogger.Error("Błąd podczas dodawania zadania.", ex);
                 MessageHelper.ShowError($"Nie udało się dodać zadania.\n\nSzczegóły: {ex.Message}");
             }
         }
@@ -261,6 +263,8 @@ namespace QueueManager.ViewModels
 
                 var tasksToDelete = SelectedTasks.Cast<QueueTask>().ToList();
 
+                AppLogger.Warning($"Usuwanie zadań. Liczba={tasksToDelete.Count}, ID=[{string.Join(", ", tasksToDelete.Select(t => t.Id))}].");
+
                 foreach (var task in tasksToDelete)
                 {
                     Tasks.Remove(task);
@@ -275,6 +279,7 @@ namespace QueueManager.ViewModels
             }
             catch (Exception ex)
             {
+                AppLogger.Error("Błąd podczas usuwania zadań.", ex);
                 MessageHelper.ShowError($"Nie udało się usunąć zadań.\n\nSzczegóły: {ex.Message}");
             }
         }
@@ -331,6 +336,7 @@ namespace QueueManager.ViewModels
                 task.PrzewidzianyCzas = PrzewidzianyCzas;
                 task.Termin = Termin;
 
+                AppLogger.Info($"Zaktualizowano zadanie ID={task.Id}, Nazwa='{task.Nazwa}', Status={task.Status}.");
                 ClearForm();
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
@@ -338,6 +344,7 @@ namespace QueueManager.ViewModels
             }
             catch (Exception ex)
             {
+                AppLogger.Error("Błąd podczas aktualizacji zadania.", ex);
                 MessageHelper.ShowError($"Nie udało się zaktualizować zadania.\n\nSzczegóły: {ex.Message}");
             }
         }
@@ -421,6 +428,15 @@ namespace QueueManager.ViewModels
             {
                 NextTask = _schedulerService.GetNextTask(Tasks, SelectedAlgorithm);
 
+                if (NextTask != null)
+                {
+                    AppLogger.Info($"Wybrano następne zadanie algorytmem {SelectedAlgorithm}: ID={NextTask.Id}, Nazwa='{NextTask.Nazwa}'.");
+                }
+                else
+                {
+                    AppLogger.Info($"Nie wybrano zadania algorytmem {SelectedAlgorithm}. Brak zadań Nowe.");
+                }
+
                 if (NextTask == null)
                     MessageHelper.ShowInfo("Brak nowych zadań do wyboru.");
 
@@ -455,6 +471,8 @@ namespace QueueManager.ViewModels
                 NextTask.Status = QueueTaskStatus.WTrakcie;
                 NextTask.DataRozpoczecia = DateTime.Now;
 
+                AppLogger.Info($"Rozpoczęto zadanie ID={NextTask.Id}, Nazwa='{NextTask.Nazwa}'.");
+
                 NextTask = null;
 
                 TasksView.Refresh();
@@ -463,6 +481,7 @@ namespace QueueManager.ViewModels
             }
             catch (Exception ex)
             {
+
                 MessageHelper.ShowError($"Nie udało się rozpocząć zadania.\n\nSzczegóły: {ex.Message}");
             }
         }
@@ -496,12 +515,15 @@ namespace QueueManager.ViewModels
                     task.DataUkonczenia = DateTime.Now;
                 }
 
+                AppLogger.Info($"Zakończono zadania. Liczba={tasksToFinish.Count}, ID=[{string.Join(", ", tasksToFinish.Select(t => t.Id))}].");
+
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
                 RefreshStatistics();
             }
             catch (Exception ex)
             {
+                AppLogger.Error("Błąd podczas kończenia zadań.", ex);
                 MessageHelper.ShowError($"Nie udało się zakończyć zadania.\n\nSzczegóły: {ex.Message}");
             }
         }
