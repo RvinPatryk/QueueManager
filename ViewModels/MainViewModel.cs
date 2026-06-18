@@ -227,6 +227,7 @@ namespace QueueManager.ViewModels
                 ClearForm();
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
+                RefreshStatistics();
             }
             catch (Exception ex)
             {
@@ -270,6 +271,7 @@ namespace QueueManager.ViewModels
                 NextTask = null;
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
+                RefreshStatistics();
             }
             catch (Exception ex)
             {
@@ -332,6 +334,7 @@ namespace QueueManager.ViewModels
                 ClearForm();
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
+                RefreshStatistics();
             }
             catch (Exception ex)
             {
@@ -456,6 +459,7 @@ namespace QueueManager.ViewModels
 
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
+                RefreshStatistics();
             }
             catch (Exception ex)
             {
@@ -494,6 +498,7 @@ namespace QueueManager.ViewModels
 
                 TasksView.Refresh();
                 CommandManager.InvalidateRequerySuggested();
+                RefreshStatistics();
             }
             catch (Exception ex)
             {
@@ -535,5 +540,54 @@ namespace QueueManager.ViewModels
 
             return true;
         }
+
+        public int TotalTasksCount => Tasks.Count;
+
+        public int NewTasksCount => Tasks.Count(t => t.Status == QueueTaskStatus.Nowe);
+
+        public int InProgressTasksCount => Tasks.Count(t => t.Status == QueueTaskStatus.WTrakcie);
+
+        public int CompletedTasksCount => Tasks.Count(t => t.Status == QueueTaskStatus.Zakonczone);
+
+        public int CancelledTasksCount => Tasks.Count(t => t.Status == QueueTaskStatus.Anulowane);
+
+        public string AverageEstimatedTime
+        {
+            get
+            {
+                if (Tasks.Count == 0)
+                    return "brak";
+
+                var averageTicks = (long)Tasks.Average(t => t.PrzewidzianyCzas.Ticks);
+                return new TimeSpan(averageTicks).ToString(@"hh:mm:ss");
+            }
+        }
+
+        public string NearestDeadline
+        {
+            get
+            {
+                var nearest = Tasks
+                    .Where(t => t.Termin.HasValue && t.Status != QueueTaskStatus.Zakonczone)
+                    .OrderBy(t => t.Termin)
+                    .FirstOrDefault();
+
+                return nearest?.Termin?.ToString("dd.MM.yyyy") ?? "brak";
+            }
+        }
+
+        private void RefreshStatistics()
+        {
+            OnPropertyChanged(nameof(TotalTasksCount));
+            OnPropertyChanged(nameof(NewTasksCount));
+            OnPropertyChanged(nameof(InProgressTasksCount));
+            OnPropertyChanged(nameof(CompletedTasksCount));
+            OnPropertyChanged(nameof(CancelledTasksCount));
+            OnPropertyChanged(nameof(AverageEstimatedTime));
+            OnPropertyChanged(nameof(NearestDeadline));
+        }
+
+
+
     }
 }

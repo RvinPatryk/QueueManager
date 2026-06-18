@@ -71,7 +71,84 @@
                     Height="35"/>
 		</StackPanel>
 
+		
+		
 		<DockPanel Grid.Column="2">
+
+			<UniformGrid DockPanel.Dock="Top"
+				 Columns="7"
+				 Margin="0,0,0,10">
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8"
+						Margin="0,0,6,0">
+					<StackPanel>
+						<TextBlock Text="Wszystkie" FontWeight="Bold"/>
+						<TextBlock Text="{Binding TotalTasksCount}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8"
+						Margin="0,0,6,0">
+					<StackPanel>
+						<TextBlock Text="Nowe" FontWeight="Bold"/>
+						<TextBlock Text="{Binding NewTasksCount}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8"
+						Margin="0,0,6,0">
+					<StackPanel>
+						<TextBlock Text="W trakcie" FontWeight="Bold"/>
+						<TextBlock Text="{Binding InProgressTasksCount}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8"
+						Margin="0,0,6,0">
+					<StackPanel>
+						<TextBlock Text="Zakończone" FontWeight="Bold"/>
+						<TextBlock Text="{Binding CompletedTasksCount}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8"
+						Margin="0,0,6,0">
+					<StackPanel>
+						<TextBlock Text="Anulowane" FontWeight="Bold"/>
+						<TextBlock Text="{Binding CancelledTasksCount}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8"
+						Margin="0,0,6,0">
+					<StackPanel>
+						<TextBlock Text="Śr. czas" FontWeight="Bold"/>
+						<TextBlock Text="{Binding AverageEstimatedTime}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+				<Border BorderBrush="#DDDDDD"
+						BorderThickness="1"
+						Padding="8">
+					<StackPanel>
+						<TextBlock Text="Najbliższy termin" FontWeight="Bold"/>
+						<TextBlock Text="{Binding NearestDeadline}" FontSize="18"/>
+					</StackPanel>
+				</Border>
+
+			</UniformGrid>	
 
 			<!-- Filtry -->
 			<StackPanel DockPanel.Dock="Top"
