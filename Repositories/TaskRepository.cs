@@ -15,6 +15,8 @@ namespace QueueManager.Repositories
         {
             using var db = new QueueManagerDbContext();
 
+            db.Database.Migrate();
+
             return db.Tasks
                 .AsNoTracking()
                 .OrderBy(task => task.Id)

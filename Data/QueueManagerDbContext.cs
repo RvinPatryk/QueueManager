@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QueueManager.Models;
+using System.IO;
 
 namespace QueueManager.Data
 {
@@ -14,7 +15,11 @@ namespace QueueManager.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=QueueManager.db");
+            var databasePath = Path.Combine(
+                AppContext.BaseDirectory,
+                "QueueManager.db");
+
+            optionsBuilder.UseSqlite($"Data Source={databasePath}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

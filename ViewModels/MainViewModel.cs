@@ -12,6 +12,7 @@ using System.Windows.Data;
 using QueueManager.Services;
 using QueueManager.Views;
 using Microsoft.Win32;
+using QueueManager.Repositories;
 
 
 namespace QueueManager.ViewModels
@@ -179,6 +180,9 @@ namespace QueueManager.ViewModels
             FinishSelectedTasksCommand = new RelayCommand(FinishSelectedTasks, CanFinishSelectedTasks);
             ShowLogsCommand = new RelayCommand(ShowLogs);
             ExportTasksCommand = new RelayCommand(ExportTasks, CanExportTasks);
+
+            LoadTasksFromDatabase();
+            RefreshStatistics();
         }
 
         private bool FilterTasks(object obj)
@@ -229,6 +233,7 @@ namespace QueueManager.ViewModels
                     Termin = Termin
                 };
 
+                _taskRepository.Add(task);
                 Tasks.Add(task);
                 AppLogger.Info($"Dodano zadanie ID={task.Id}, Nazwa='{task.Nazwa}', Priorytet={task.Priorytet}, Status={task.Status}.");
                 ClearForm();
@@ -270,6 +275,8 @@ namespace QueueManager.ViewModels
                 var tasksToDelete = SelectedTasks.Cast<QueueTask>().ToList();
 
                 AppLogger.Warning($"Usuwanie zadań. Liczba={tasksToDelete.Count}, ID=[{string.Join(", ", tasksToDelete.Select(t => t.Id))}].");
+
+                _taskRepository.DeleteMany(tasksToDelete.Select(t => t.Id));
 
                 foreach (var task in tasksToDelete)
                 {
@@ -342,6 +349,8 @@ namespace QueueManager.ViewModels
                 task.PrzewidzianyCzas = PrzewidzianyCzas;
                 task.Termin = Termin;
 
+                _taskRepository.Update(task);
+
                 AppLogger.Info($"Zaktualizowano zadanie ID={task.Id}, Nazwa='{task.Nazwa}', Status={task.Status}.");
                 ClearForm();
                 TasksView.Refresh();
@@ -397,10 +406,12 @@ namespace QueueManager.ViewModels
             OnPropertyChanged(name);
             return true;
         }
-        
+
         private readonly TaskSchedulerService _schedulerService = new();
 
         private readonly TaskExportService _taskExportService = new();
+
+        private readonly TaskRepository _taskRepository = new();
 
         private SchedulingAlgorithm _selectedAlgorithm = SchedulingAlgorithm.FIFO;
         private QueueTask? _nextTask;
@@ -450,7 +461,8 @@ namespace QueueManager.ViewModels
                     MessageHelper.ShowInfo("Brak nowych zadań do wyboru.");
 
                 CommandManager.InvalidateRequerySuggested();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageHelper.ShowError($"Nie udało się wybrać następnego zadania.\n\nSzczegóły: {ex.Message}");
             }
@@ -479,6 +491,8 @@ namespace QueueManager.ViewModels
 
                 NextTask.Status = QueueTaskStatus.WTrakcie;
                 NextTask.DataRozpoczecia = DateTime.Now;
+
+                _taskRepository.Update(NextTask);
 
                 AppLogger.Info($"Rozpoczęto zadanie ID={NextTask.Id}, Nazwa='{NextTask.Nazwa}'.");
 
@@ -522,6 +536,8 @@ namespace QueueManager.ViewModels
                 {
                     task.Status = QueueTaskStatus.Zakonczone;
                     task.DataUkonczenia = DateTime.Now;
+
+                    _taskRepository.Update(task);
                 }
 
                 AppLogger.Info($"Zakończono zadania. Liczba={tasksToFinish.Count}, ID=[{string.Join(", ", tasksToFinish.Select(t => t.Id))}].");
@@ -666,5 +682,31 @@ namespace QueueManager.ViewModels
             return Tasks.Count > 0;
         }
 
+        private void LoadTasksFromDatabase()
+        {
+            try
+            {
+                var tasksFromDatabase = _taskRepository.GetAll();
+
+                foreach (var task in tasksFromDatabase)
+                {
+                    Tasks.Add(task);
+                }
+
+                _nextId = Tasks.Count > 0
+                    ? Tasks.Max(task => task.Id) + 1
+                    : 1;
+
+                Id = _nextId;
+
+                AppLogger.Info($"Załadowano zadania z bazy danych. Liczba: {Tasks.Count}.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error("Błąd podczas ładowania zadań z bazy danych.", ex);
+                MessageHelper.ShowError(
+                    $"Nie udało się załadować danych z bazy.\n\nSzczegóły: {ex.Message}");
+            }
+        }
     }
 }
