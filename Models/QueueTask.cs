@@ -21,6 +21,10 @@ namespace QueueManager.Models
 
     public class QueueTask : INotifyPropertyChanged
     {
+        public QueueTask()
+        {
+        }
+
         private int _id;
         private string _nazwa = string.Empty;
         private string _opis = string.Empty;
