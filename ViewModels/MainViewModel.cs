@@ -590,7 +590,7 @@ namespace QueueManager.ViewModels
                     return "brak";
 
                 var averageTicks = (long)Tasks.Average(t => t.PrzewidzianyCzas.Ticks);
-                return new TimeSpan(averageTicks).ToString(@"hh:mm:ss");
+                return new TimeSpan(averageTicks).ToString(@"hh\:mm\:ss");
             }
         }
 
