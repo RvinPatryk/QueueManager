@@ -251,6 +251,7 @@ namespace QueueManager.ViewModels
         private bool CanAddTask()
         {
             return !string.IsNullOrWhiteSpace(Nazwa)
+                   && Nazwa.Trim().Length >= 3
                    && Priorytet >= 1
                    && Priorytet <= 10
                    && PrzewidzianyCzas > TimeSpan.Zero;
@@ -334,6 +335,9 @@ namespace QueueManager.ViewModels
                 if (SelectedTasks[0] is not QueueTask task)
                     return;
 
+                if (!ValidateTaskForm())
+                    return;
+
                 if (string.IsNullOrWhiteSpace(Nazwa))
                     return;
 
@@ -369,6 +373,7 @@ namespace QueueManager.ViewModels
             return SelectedTasks != null
                    && SelectedTasks.Count == 1
                    && !string.IsNullOrWhiteSpace(Nazwa)
+                   && Nazwa.Trim().Length >= 3
                    && Priorytet >= 1
                    && Priorytet <= 10
                    && PrzewidzianyCzas > TimeSpan.Zero;
@@ -388,6 +393,55 @@ namespace QueueManager.ViewModels
             Status = QueueTaskStatus.Nowe;
             PrzewidzianyCzas = TimeSpan.FromMinutes(30);
             Termin = null;
+        }
+
+        private bool ValidateTaskForm()
+        {
+            if (string.IsNullOrWhiteSpace(Nazwa))
+            {
+                MessageHelper.ShowError("Nazwa zadania jest wymagana.");
+                return false;
+            }
+
+            if (Nazwa.Trim().Length < 3)
+            {
+                MessageHelper.ShowError("Nazwa zadania musi mieć co najmniej 3 znaki.");
+                return false;
+            }
+
+            if (Nazwa.Trim().Length > 100)
+            {
+                MessageHelper.ShowError("Nazwa zadania może mieć maksymalnie 100 znaków.");
+                return false;
+            }
+
+            if (Priorytet < 1 || Priorytet > 10)
+            {
+                MessageHelper.ShowError("Priorytet musi być w zakresie od 1 do 10.");
+                return false;
+            }
+
+            if (PrzewidzianyCzas <= TimeSpan.Zero)
+            {
+                MessageHelper.ShowError("Przewidziany czas musi być większy od zera.");
+                return false;
+            }
+
+            if (Termin.HasValue && Termin.Value.Date < DataUtworzenia.Date)
+            {
+                MessageHelper.ShowError("Termin nie może być wcześniejszy niż data utworzenia.");
+                return false;
+            }
+
+            if (DataRozpoczecia.HasValue &&
+                DataUkonczenia.HasValue &&
+                DataUkonczenia.Value < DataRozpoczecia.Value)
+            {
+                MessageHelper.ShowError("Data ukończenia nie może być wcześniejsza niż data rozpoczęcia.");
+                return false;
+            }
+
+            return true;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -559,34 +613,7 @@ namespace QueueManager.ViewModels
                    && SelectedTasks.Cast<QueueTask>().Any(t => t.Status == QueueTaskStatus.WTrakcie);
         }
 
-        private bool ValidateTaskForm()
-        {
-            if (string.IsNullOrWhiteSpace(Nazwa))
-            {
-                MessageHelper.ShowError("Nazwa zadania nie może być pusta.");
-                return false;
-            }
-
-            if (Priorytet < 1 || Priorytet > 10)
-            {
-                MessageHelper.ShowError("Priorytet musi być w zakresie 1-10.");
-                return false;
-            }
-
-            if (PrzewidzianyCzas <= TimeSpan.Zero)
-            {
-                MessageHelper.ShowError("Przewidziany czas musi być większy od zera.");
-                return false;
-            }
-
-            if (Termin.HasValue && Termin.Value.Date < DateTime.Today)
-            {
-                MessageHelper.ShowError("Termin nie może być wcześniejszy niż dzisiejsza data.");
-                return false;
-            }
-
-            return true;
-        }
+        
 
         public int TotalTasksCount => Tasks.Count;
 
