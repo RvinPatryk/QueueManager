@@ -13,6 +13,8 @@ namespace QueueManager.Data
     {
         public DbSet<QueueTask> Tasks { get; set; } = null!;
 
+        public DbSet<User> Users { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var databasePath = Path.Combine(
@@ -47,6 +49,27 @@ namespace QueueManager.Data
                 entity.Property(t => t.Status)
                     .IsRequired();
             });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(user => user.Id);
+
+                entity.Property(user => user.Username)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasIndex(user => user.Username)
+                    .IsUnique();
+
+                entity.Property(user => user.PasswordHash)
+                    .IsRequired();
+
+                entity.Property(user => user.Role)
+                    .IsRequired();
+            });
+
         }
+
+
     }
 }
