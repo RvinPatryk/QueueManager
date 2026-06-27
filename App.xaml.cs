@@ -1,14 +1,23 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
+using Microsoft.EntityFrameworkCore;
+using QueueManager.Data;
+using QueueManager.Services;
 
 namespace QueueManager
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-    }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            using (var db = new QueueManagerDbContext())
+            {
+                db.Database.Migrate();
+            }
 
+            var authService = new AuthService();
+            authService.CreateDefaultAdmin();
+
+            base.OnStartup(e);
+        }
+    }
 }

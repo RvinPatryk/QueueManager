@@ -11,7 +11,7 @@ using QueueManager.Data;
 namespace QueueManager.Migrations
 {
     [DbContext(typeof(QueueManagerDbContext))]
-    [Migration("20260624195533_AddUsers")]
+    [Migration("20260627080820_AddUsers")]
     partial class AddUsers
     {
         /// <inheritdoc />
