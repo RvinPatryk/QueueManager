@@ -1,0 +1,98 @@
+﻿<Window x:Class="QueueManager.Views.UserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:QueueManager.Converters"
+        Title="Panel użytkownika"
+        Height="600"
+        Width="1000"
+        MinHeight="500"
+        MinWidth="800">
+
+    <Window.Resources>
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Panel użytkownika"
+                       FontSize="22"
+                       FontWeight="Bold"/>
+
+            <TextBlock FontSize="14">
+                <Run Text="Zalogowano jako: "/>
+                <Run Text="{Binding LoggedUsername, Mode=OneWay}" FontWeight="Bold"/>
+            </TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,12">
+
+            <Button Content="Odśwież"
+                    Command="{Binding RefreshTasksCommand}"
+                    Width="110"
+                    Height="34"
+                    Margin="0,0,8,0"/>
+
+            <Button Content="Rozpocznij"
+                    Command="{Binding StartTaskCommand}"
+                    Width="110"
+                    Height="34"
+                    Margin="0,0,8,0"/>
+
+            <Button Content="Zakończ"
+                    Command="{Binding FinishTaskCommand}"
+                    Width="110"
+                    Height="34"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Tasks}"
+                  SelectedItem="{Binding SelectedTask}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  CanUserResizeColumns="True"
+                  CanUserSortColumns="True"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"
+                                    Binding="{Binding Id}"
+                                    Width="60"/>
+
+                <DataGridTextColumn Header="Nazwa"
+                                    Binding="{Binding Nazwa}"
+                                    Width="180"/>
+
+                <DataGridTextColumn Header="Opis"
+                                    Binding="{Binding Opis}"
+                                    Width="250"/>
+
+                <DataGridTextColumn Header="Priorytet"
+                                    Binding="{Binding Priorytet}"
+                                    Width="90"/>
+
+                <DataGridTextColumn Header="Status"
+                                    Binding="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}"
+                                    Width="120"/>
+
+                <DataGridTextColumn Header="Termin"
+                                    Binding="{Binding Termin, StringFormat={}{0:dd.MM.yyyy}}"
+                                    Width="120"/>
+
+                <DataGridTextColumn Header="Czas plan."
+                                    Binding="{Binding PrzewidzianyCzas}"
+                                    Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

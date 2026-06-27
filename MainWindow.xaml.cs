@@ -10,20 +10,24 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections;
+using QueueManager.Models;
 
 namespace QueueManager
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(User loggedUser)
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            DataContext = new MainViewModel(loggedUser);
         }
 
-        private void TasksDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TasksDataGrid_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
         {
-            if (DataContext is MainViewModel vm && sender is DataGrid dataGrid)
+            if (DataContext is MainViewModel vm &&
+                sender is DataGrid dataGrid)
             {
                 vm.SelectedTasks = dataGrid.SelectedItems;
             }

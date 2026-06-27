@@ -16,6 +16,7 @@ namespace QueueManager
 
             var authService = new AuthService();
             authService.CreateDefaultAdmin();
+            authService.CreateDefaultUser();
 
             base.OnStartup(e);
         }

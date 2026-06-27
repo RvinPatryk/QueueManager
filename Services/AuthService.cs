@@ -56,6 +56,20 @@ namespace QueueManager.Services
             return true;
         }
 
+        public void CreateDefaultUser()
+        {
+            const string username = "user";
+            const string password = "user123";
+
+            if (_userRepository.UsernameExists(username))
+                return;
+
+            Register(username, password, UserRole.User);
+
+            AppLogger.Warning(
+                "Utworzono domyślne konto użytkownika: user.");
+        }
+
         public void CreateDefaultAdmin()
         {
             const string username = "admin";

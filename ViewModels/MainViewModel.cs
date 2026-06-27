@@ -13,6 +13,7 @@ using QueueManager.Services;
 using QueueManager.Views;
 using Microsoft.Win32;
 using QueueManager.Repositories;
+using QueueManager.Models;
 
 
 namespace QueueManager.ViewModels
@@ -33,6 +34,7 @@ namespace QueueManager.ViewModels
         private QueueTaskStatus _status = QueueTaskStatus.Nowe;
         private TimeSpan _przewidzianyCzas = TimeSpan.FromMinutes(30);
         private DateTime? _termin;
+        private readonly User _loggedUser;
 
         private IList _selectedTasks = new ArrayList();
         private string _searchText = string.Empty;
@@ -163,8 +165,9 @@ namespace QueueManager.ViewModels
         public ICommand ClearFiltersCommand { get; }
 
 
-        public MainViewModel()
+        public MainViewModel(User loggedUser)
         {
+            _loggedUser = loggedUser;
             Id = _nextId;
 
             TasksView = CollectionViewSource.GetDefaultView(Tasks);
