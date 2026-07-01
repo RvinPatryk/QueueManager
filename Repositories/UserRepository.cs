@@ -46,5 +46,25 @@ namespace QueueManager.Repositories
                 .OrderBy(user => user.Username)
                 .ToList();
         }
+        public void Update(User user)
+        {
+            using var db = new QueueManagerDbContext();
+
+            db.Users.Update(user);
+            db.SaveChanges();
+        }
+
+        public void Delete(int userId)
+        {
+            using var db = new QueueManagerDbContext();
+
+            var user = db.Users.Find(userId);
+
+            if (user == null)
+                return;
+
+            db.Users.Remove(user);
+            db.SaveChanges();
+        }
     }
 }

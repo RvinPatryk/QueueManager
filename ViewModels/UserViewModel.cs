@@ -18,6 +18,8 @@ namespace QueueManager.ViewModels
 
         private QueueTask? _selectedTask;
 
+        private bool _hideCompletedTasks = true;
+
         public ObservableCollection<QueueTask> Tasks { get; } = new();
 
         public string LoggedUsername => _loggedUser.Username;
@@ -46,6 +48,17 @@ namespace QueueManager.ViewModels
 
             LoadMyTasks();
         }
+        public bool HideCompletedTasks
+        {
+            get => _hideCompletedTasks;
+            set
+            {
+                if (SetField(ref _hideCompletedTasks, value))
+                {
+                    LoadMyTasks();
+                }
+            }
+        }
 
         private void LoadMyTasks()
         {
@@ -59,6 +72,7 @@ namespace QueueManager.ViewModels
                         t.OsobaPrzypisana,
                         _loggedUser.Username,
                         StringComparison.OrdinalIgnoreCase))
+                    .Where(t => !HideCompletedTasks || t.Status != QueueTaskStatus.Zakonczone)
                     .OrderBy(t => t.Status)
                     .ThenBy(t => t.Termin ?? DateTime.MaxValue)
                     .ToList();

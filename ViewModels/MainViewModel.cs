@@ -44,6 +44,21 @@ namespace QueueManager.ViewModels
 
         public Array StatusOptions => Enum.GetValues(typeof(QueueTaskStatus));
 
+        public ObservableCollection<string> Usernames { get; } = new();
+
+        public void LoadUsernames()
+        {
+            Usernames.Clear();
+
+            foreach (var username in _userRepository
+                         .GetAll()
+                         .OrderBy(user => user.Username)
+                         .Select(user => user.Username))
+            {
+                Usernames.Add(username);
+            }
+        }
+
         public int Id
         {
             get => _id;
@@ -168,6 +183,7 @@ namespace QueueManager.ViewModels
         public MainViewModel(User loggedUser)
         {
             _loggedUser = loggedUser;
+            Autor = _loggedUser.Username;
             Id = _nextId;
 
             TasksView = CollectionViewSource.GetDefaultView(Tasks);
@@ -183,7 +199,8 @@ namespace QueueManager.ViewModels
             FinishSelectedTasksCommand = new RelayCommand(FinishSelectedTasks, CanFinishSelectedTasks);
             ShowLogsCommand = new RelayCommand(ShowLogs);
             ExportTasksCommand = new RelayCommand(ExportTasks, CanExportTasks);
-
+            
+            LoadUsernames();
             LoadTasksFromDatabase();
             RefreshStatistics();
         }
@@ -388,7 +405,7 @@ namespace QueueManager.ViewModels
             Nazwa = string.Empty;
             Opis = string.Empty;
             Priorytet = 1;
-            Autor = string.Empty;
+            Autor = _loggedUser.Username;
             OsobaPrzypisana = string.Empty;
             DataUtworzenia = DateTime.Now;
             DataRozpoczecia = null;
@@ -469,6 +486,8 @@ namespace QueueManager.ViewModels
         private readonly TaskExportService _taskExportService = new();
 
         private readonly TaskRepository _taskRepository = new();
+
+        private readonly UserRepository _userRepository = new();
 
         private SchedulingAlgorithm _selectedAlgorithm = SchedulingAlgorithm.FIFO;
         private QueueTask? _nextTask;

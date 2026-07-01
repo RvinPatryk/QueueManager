@@ -5,255 +5,688 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:QueueManager.Converters"
         mc:Ignorable="d"
-        Title="Queue Manager" Height="600" Width="1000">
+        Title="Queue Manager - Panel administratora"
+        Height="760"
+        Width="1300"
+        MinHeight="650"
+        MinWidth="1050"
+        Background="#F5F5F5"
+        FontFamily="Segoe UI"
+        FontSize="13"
+        WindowStartupLocation="CenterScreen">
 
-	<Window.Resources>
-		<converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
-	</Window.Resources>
+    <Window.Resources>
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
 
-	<Grid Margin="10">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="350"/>
-			<ColumnDefinition Width="20"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BorderBrushSoft" Color="#E5E7EB"/>
+        <SolidColorBrush x:Key="TextMainBrush" Color="#1F2937"/>
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#6B7280"/>
 
-		<StackPanel Grid.Column="0">
-			<TextBlock Text="Dodaj zadanie" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#16A34A"/>
+        <SolidColorBrush x:Key="DangerBrush" Color="#DC2626"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="#F9FAFB"/>
 
-			<TextBlock Text="Id"/>
-			<TextBox Text="{Binding Id}" IsReadOnly="True" Margin="0,0,0,8"/>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMainBrush}"/>
+        </Style>
 
-			<TextBlock Text="Nazwa"/>
-			<TextBox Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+        <Style x:Key="MutedTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
 
-			<TextBlock Text="Opis"/>
-			<TextBox Text="{Binding Opis, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+        <Style x:Key="LabelTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
 
-			<TextBlock Text="Priorytet"/>
-			<TextBox Text="{Binding Priorytet, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-			<TextBlock Text="Autor"/>
-			<TextBox Text="{Binding Autor, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="7,3"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-			<TextBlock Text="Osoba przypisana"/>
-			<TextBox Text="{Binding OsobaPrzypisana, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+        <Style TargetType="DatePicker">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-			<TextBlock Text="Status"/>
-			<ComboBox ItemsSource="{Binding StatusOptions}"
-                      SelectedItem="{Binding Status}"
-                      Margin="0,0,0,8">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
 
-			<TextBlock Text="Przewidziany czas (hh:mm:ss)"/>
-			<TextBox Text="{Binding PrzewidzianyCzas, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
 
-			<TextBlock Text="Termin"/>
-			<DatePicker SelectedDate="{Binding Termin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.88"/>
+                            </Trigger>
 
-			<Button Content="Dodaj zadanie"
-                    Command="{Binding AddTaskCommand}"
-                    Height="35"
-                    Margin="0,0,0,8"/>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.76"/>
+                            </Trigger>
 
-			<Button Content="Zapisz zmiany"
-                    Command="{Binding UpdateTaskCommand}"
-                    Height="35"
-                    Margin="0,0,0,8"/>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.45"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-			<Button Content="Usuń zaznaczone"
-        Command="{Binding DeleteTaskCommand}"
-        Height="35"
-        Margin="0,0,0,8"/>
+        <Style x:Key="PrimaryButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
-			<Button Content="Pokaż logi"
-					Command="{Binding ShowLogsCommand}"
-					Height="35"/>
-			<Button Content="Eksportuj CSV"
-        Command="{Binding ExportTasksCommand}"
-        Height="35"/>
-		</StackPanel>
+        <Style x:Key="SuccessButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
-		
-		
-		<DockPanel Grid.Column="2">
+        <Style x:Key="DangerButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource DangerBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
-			<UniformGrid DockPanel.Dock="Top"
-				 Columns="7"
-				 Margin="0,0,0,10">
+        <Style x:Key="SecondaryButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMainBrush}"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8"
-						Margin="0,0,6,0">
-					<StackPanel>
-						<TextBlock Text="Wszystkie" FontWeight="Bold"/>
-						<TextBlock Text="{Binding TotalTasksCount}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrushSoft}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#EEEEEE"/>
+            <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
+            <Setter Property="RowHeight" Value="42"/>
+            <Setter Property="AlternatingRowBackground" Value="#FAFAFA"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8"
-						Margin="0,0,6,0">
-					<StackPanel>
-						<TextBlock Text="Nowe" FontWeight="Bold"/>
-						<TextBlock Text="{Binding NewTasksCount}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrushSoft}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        </Style>
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8"
-						Margin="0,0,6,0">
-					<StackPanel>
-						<TextBlock Text="W trakcie" FontWeight="Bold"/>
-						<TextBlock Text="{Binding InProgressTasksCount}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8"
-						Margin="0,0,6,0">
-					<StackPanel>
-						<TextBlock Text="Zakończone" FontWeight="Bold"/>
-						<TextBlock Text="{Binding CompletedTasksCount}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+    <Grid Background="{StaticResource AppBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="76"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8"
-						Margin="0,0,6,0">
-					<StackPanel>
-						<TextBlock Text="Anulowane" FontWeight="Bold"/>
-						<TextBlock Text="{Binding CancelledTasksCount}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+        <!-- Górny pasek -->
+        <Border Grid.Row="0"
+                Background="White"
+                BorderBrush="{StaticResource BorderBrushSoft}"
+                BorderThickness="0,0,0,1">
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8"
-						Margin="0,0,6,0">
-					<StackPanel>
-						<TextBlock Text="Śr. czas" FontWeight="Bold"/>
-						<TextBlock Text="{Binding AverageEstimatedTime}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+            <Grid Margin="28,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-				<Border BorderBrush="#DDDDDD"
-						BorderThickness="1"
-						Padding="8">
-					<StackPanel>
-						<TextBlock Text="Najbliższy termin" FontWeight="Bold"/>
-						<TextBlock Text="{Binding NearestDeadline}" FontSize="18"/>
-					</StackPanel>
-				</Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Queue Manager"
+                               FontSize="24"
+                               FontWeight="SemiBold"/>
 
-			</UniformGrid>	
+                    <TextBlock Text="Panel administracyjny"
+                               Style="{StaticResource MutedTextStyle}"
+                               Margin="0,3,0,0"/>
+                </StackPanel>
 
-			<!-- Filtry -->
-			<StackPanel DockPanel.Dock="Top"
-                        Orientation="Horizontal"
-                        Margin="0,0,0,10">
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
 
-				<TextBox Width="250"
-                         Margin="0,0,10,0"
-                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="Szukaj po nazwie, opisie, autorze lub osobie przypisanej"/>
+                    <Border Background="#EFF6FF"
+                            BorderBrush="#DBEAFE"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="12,6"
+                            Margin="0,0,12,0">
 
-				<ComboBox Width="160"
-                          Margin="0,0,10,0"
-                          ItemsSource="{Binding StatusFilterOptions}"
-                          SelectedItem="{Binding SelectedStatusFilter}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+                        <TextBlock Text="Administrator"
+                                   Foreground="#1D4ED8"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"/>
+                    </Border>
 
-				<Button Content="Wyczyść filtry"
-                        Command="{Binding ClearFiltersCommand}"
-                        Width="120"/>
-			</StackPanel>
+                    <Button Content="Wyloguj"
+                            Click="LogoutButton_Click"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Margin="0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-			<!-- Panel strategii kolejki -->
-			<StackPanel DockPanel.Dock="Top"
-                        Orientation="Horizontal"
-                        Margin="0,0,0,10">
+        <!-- Główna zawartość -->
+        <Grid Grid.Row="1"
+              Margin="24">
 
-				<TextBlock Text="Algorytm:"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="355"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-				<ComboBox Width="160"
-                          Margin="0,0,10,0"
-                          ItemsSource="{Binding AlgorithmOptions}"
-                          SelectedItem="{Binding SelectedAlgorithm}"/>
+            <!-- Formularz -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource CardBrush}"
+                    BorderBrush="{StaticResource BorderBrushSoft}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="20">
 
-				<Button Content="Wybierz następne"
-                        Command="{Binding SelectNextTaskCommand}"
-                        Width="130"
-                        Margin="0,0,10,0"/>
+                <DockPanel LastChildFill="True">
 
-				<Button Content="Rozpocznij"
-						Command="{Binding StartNextTaskCommand}"
-						Width="100"
-						Margin="0,0,10,0"/>
+                    <StackPanel DockPanel.Dock="Top"
+                                Margin="0,0,0,16">
+                        <TextBlock Text="Zadanie"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"/>
 
-				<Button Content="Zakończ zaznaczone"
-						Command="{Binding FinishSelectedTasksCommand}"
-						Width="140"
-						Margin="0,0,10,0"/>
-				
-				<Button Content="Przetwórz"
-                        Command="{Binding StartNextTaskCommand}"
-                        Width="100"
-                        Margin="0,0,10,0"/>
+                        <TextBlock Text="Dodaj nowe zadanie albo edytuj zaznaczone."
+                                   Style="{StaticResource MutedTextStyle}"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
 
-				<TextBlock Text="Następne:"
-                           VerticalAlignment="Center"
-                           Margin="0,0,6,0"/>
+                    <StackPanel DockPanel.Dock="Bottom"
+                                Margin="0,14,0,0">
 
-				<TextBlock Text="{Binding NextTask.Nazwa, TargetNullValue='brak'}"
-                           VerticalAlignment="Center"
-                           FontWeight="Bold"/>
-			</StackPanel>
+                        <Button Content="Dodaj zadanie"
+                                Command="{Binding AddTaskCommand}"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Margin="0,0,0,8"/>
 
-			<!-- Lista zadań -->
-			<DataGrid x:Name="TasksDataGrid"
-                      ItemsSource="{Binding TasksView}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      SelectionMode="Extended"
-                      SelectionUnit="FullRow"
-                      SelectionChanged="TasksDataGrid_SelectionChanged"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      CanUserResizeColumns="True"
-                      CanUserSortColumns="True">
+                        <Button Content="Zapisz zmiany"
+                                Command="{Binding UpdateTaskCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Margin="0,0,0,8"/>
 
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Id" Binding="{Binding Id}" />
-					<DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" />
-					<DataGridTextColumn Header="Opis" Binding="{Binding Opis}" />
-					<DataGridTextColumn Header="Priorytet" Binding="{Binding Priorytet}" />
-					<DataGridTextColumn Header="Autor" Binding="{Binding Autor}" />
-					<DataGridTextColumn Header="Przypisana" Binding="{Binding OsobaPrzypisana}" />
-					<DataGridTextColumn Header="Status"
-                                        Binding="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}" />
-					<DataGridTextColumn Header="Data utworzenia" Binding="{Binding DataUtworzenia}" />
-					<DataGridTextColumn Header="Przewidziany czas" Binding="{Binding PrzewidzianyCzas}" />
-					<DataGridTextColumn Header="Termin" Binding="{Binding Termin}" />
-				</DataGrid.Columns>
-			</DataGrid>
-		</DockPanel>
-	</Grid>
+                        <Button Content="Usuń zaznaczone"
+                                Command="{Binding DeleteTaskCommand}"
+                                Style="{StaticResource DangerButtonStyle}"
+                                Margin="0,0,0,8"/>
+
+                        <Separator Margin="0,2,0,10"/>
+
+                        <Button Content="Pokaż logi"
+                                Command="{Binding ShowLogsCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Margin="0,0,0,8"/>
+
+                        <Button Content="Eksportuj CSV"
+                                Command="{Binding ExportTasksCommand}"
+                                Margin="0,0,0,8"
+                                Style="{StaticResource SecondaryButtonStyle}"/>
+                        
+                        <Button Content="Użytkownicy"
+                        Click="UsersButton_Click"
+                        Style="{StaticResource SecondaryButtonStyle}" RenderTransformOrigin="0.508,1.237"/>
+                    </StackPanel>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+
+                        <StackPanel>
+                            <TextBlock Text="Id"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <TextBox Text="{Binding Id}"
+                                     IsReadOnly="True"/>
+
+                            <TextBlock Text="Nazwa"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <TextBox Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Text="Opis"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <TextBox Text="{Binding Opis, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="68"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     VerticalContentAlignment="Top"/>
+
+                            <TextBlock Text="Priorytet"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <TextBox Text="{Binding Priorytet, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Text="Autor"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <TextBox Text="{Binding Autor}"
+                            IsReadOnly="True"
+                            Background="#F3F4F6"/>
+
+                            <TextBlock Text="Osoba przypisana"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <ComboBox ItemsSource="{Binding Usernames}"
+                            SelectedItem="{Binding OsobaPrzypisana, UpdateSourceTrigger=PropertyChanged}"
+                            IsEditable="True"/>
+
+                            <TextBlock Text="Status"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <ComboBox ItemsSource="{Binding StatusOptions}"
+                                      SelectedItem="{Binding Status}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Text="Przewidziany czas (hh:mm:ss)"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <TextBox Text="{Binding PrzewidzianyCzas, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Text="Termin"
+                                       Style="{StaticResource LabelTextStyle}"/>
+
+                            <DatePicker SelectedDate="{Binding Termin, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          Width="16"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="Transparent"
+                          ShowsPreview="True"/>
+
+            <!-- Prawy panel -->
+            <Border Grid.Column="2"
+                    Background="{StaticResource CardBrush}"
+                    BorderBrush="{StaticResource BorderBrushSoft}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="20">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Nagłówek -->
+                    <Grid Grid.Row="0"
+                          Margin="0,0,0,16">
+
+                        <StackPanel>
+                            <TextBlock Text="Lista zadań"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBlock Text="Zarządzaj zadaniami, filtrami oraz kolejką."
+                                       Style="{StaticResource MutedTextStyle}"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Statystyki -->
+                    <UniformGrid Grid.Row="1"
+                                 Columns="4"
+                                 Margin="0,0,0,16">
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,8,8">
+                            <StackPanel>
+                                <TextBlock Text="Wszystkie"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding TotalTasksCount}"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,8,8">
+                            <StackPanel>
+                                <TextBlock Text="Nowe"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding NewTasksCount}"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,8,8">
+                            <StackPanel>
+                                <TextBlock Text="W trakcie"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding InProgressTasksCount}"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="Zakończone"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding CompletedTasksCount}"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Anulowane"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding CancelledTasksCount}"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Średni czas"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding AverageEstimatedTime}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{StaticResource BorderBrushSoft}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12"
+                                Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Najbliższy termin"
+                                           Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding NearestDeadline}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Filtry -->
+                    <Border Grid.Row="2"
+                            Background="#FAFAFA"
+                            BorderBrush="{StaticResource BorderBrushSoft}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="12"
+                            Margin="0,0,0,12">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="165"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="125"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Wyszukiwanie"
+                                           Style="{StaticResource LabelTextStyle}"/>
+
+                                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="0"
+                                         ToolTip="Szukaj po nazwie, opisie, autorze lub osobie przypisanej"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Status"
+                                           Style="{StaticResource LabelTextStyle}"/>
+
+                                <ComboBox ItemsSource="{Binding StatusFilterOptions}"
+                                          SelectedItem="{Binding SelectedStatusFilter}"
+                                          Margin="0">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <Button Grid.Column="4"
+                                    Content="Wyczyść"
+                                    Command="{Binding ClearFiltersCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Kolejka -->
+                    <Border Grid.Row="3"
+                            Background="#F8FAFC"
+                            BorderBrush="{StaticResource BorderBrushSoft}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="12"
+                            Margin="0,0,0,12">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="145"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Algorytm kolejki"
+                                           Style="{StaticResource LabelTextStyle}"/>
+
+                                <ComboBox ItemsSource="{Binding AlgorithmOptions}"
+                                          SelectedItem="{Binding SelectedAlgorithm}"
+                                          Margin="0"/>
+                            </StackPanel>
+
+                            <Button Grid.Column="2"
+                                    Content="Wybierz następne"
+                                    Command="{Binding SelectNextTaskCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0"/>
+
+                            <Button Grid.Column="4"
+                                    Content="Rozpocznij"
+                                    Command="{Binding StartNextTaskCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0"/>
+
+                            <Button Grid.Column="6"
+                                    Content="Zakończ zaznaczone"
+                                    Command="{Binding FinishSelectedTasksCommand}"
+                                    Style="{StaticResource SuccessButtonStyle}"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0"/>
+
+                            <StackPanel Grid.Column="8"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="Następne zadanie"
+                                           Style="{StaticResource LabelTextStyle}"/>
+
+                                <TextBlock Text="{Binding NextTask.Nazwa, TargetNullValue='Brak wybranego zadania'}"
+                                           FontWeight="SemiBold"
+                                           Foreground="#1D4ED8"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Tabela -->
+                    <DataGrid Grid.Row="4"
+                              x:Name="TasksDataGrid"
+                              ItemsSource="{Binding TasksView}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              SelectionUnit="FullRow"
+                              SelectionChanged="TasksDataGrid_SelectionChanged">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID"
+                                                Binding="{Binding Id}"
+                                                Width="55"/>
+
+                            <DataGridTextColumn Header="Nazwa"
+                                                Binding="{Binding Nazwa}"
+                                                Width="170"/>
+
+                            <DataGridTextColumn Header="Opis"
+                                                Binding="{Binding Opis}"
+                                                Width="250"/>
+
+                            <DataGridTextColumn Header="Priorytet"
+                                                Binding="{Binding Priorytet}"
+                                                Width="90"/>
+
+                            <DataGridTextColumn Header="Autor"
+                                                Binding="{Binding Autor}"
+                                                Width="125"/>
+
+                            <DataGridTextColumn Header="Przypisana"
+                                                Binding="{Binding OsobaPrzypisana}"
+                                                Width="135"/>
+
+                            <DataGridTextColumn Header="Status"
+                                                Binding="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}"
+                                                Width="120"/>
+
+                            <DataGridTextColumn Header="Utworzono"
+                                                Binding="{Binding DataUtworzenia, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                                                Width="145"/>
+
+                            <DataGridTextColumn Header="Czas plan."
+                                                Binding="{Binding PrzewidzianyCzas}"
+                                                Width="115"/>
+
+                            <DataGridTextColumn Header="Termin"
+                                                Binding="{Binding Termin, StringFormat={}{0:dd.MM.yyyy}}"
+                                                Width="115"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </Window>

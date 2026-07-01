@@ -65,5 +65,14 @@ namespace QueueManager.Views
                     $"Wystąpił błąd podczas logowania: {ex.Message}";
             }
         }
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            var registerWindow = new RegisterWindow
+            {
+                Owner = this
+            };
+
+            registerWindow.ShowDialog();
+        }
     }
 }
