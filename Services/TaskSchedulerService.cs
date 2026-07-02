@@ -105,5 +105,85 @@ namespace QueueManager.Services
 
             return tasks.LastOrDefault();
         }
+        public List<QueueTask> OrderTasks(
+            IEnumerable<QueueTask> tasks,
+            SchedulingAlgorithm algorithm)
+        {
+            var taskList = tasks.ToList();
+
+            return algorithm switch
+            {
+                SchedulingAlgorithm.FIFO => taskList
+                    .OrderBy(task => task.DataUtworzenia)
+                    .ToList(),
+
+                SchedulingAlgorithm.LIFO => taskList
+                    .OrderByDescending(task => task.DataUtworzenia)
+                    .ToList(),
+
+                SchedulingAlgorithm.Priority => taskList
+                    .OrderByDescending(task => task.Priorytet)
+                    .ThenBy(task => task.DataUtworzenia)
+                    .ToList(),
+
+                SchedulingAlgorithm.SJF => taskList
+                    .OrderBy(task => task.PrzewidzianyCzas)
+                    .ThenByDescending(task => task.Priorytet)
+                    .ThenBy(task => task.DataUtworzenia)
+                    .ToList(),
+
+                SchedulingAlgorithm.LJF => taskList
+                    .OrderByDescending(task => task.PrzewidzianyCzas)
+                    .ThenByDescending(task => task.Priorytet)
+                    .ThenBy(task => task.DataUtworzenia)
+                    .ToList(),
+
+                SchedulingAlgorithm.EDF => taskList
+                    .OrderBy(task => task.Termin ?? DateTime.MaxValue)
+                    .ThenByDescending(task => task.Priorytet)
+                    .ThenBy(task => task.DataUtworzenia)
+                    .ToList(),
+
+                SchedulingAlgorithm.Random => taskList
+                    .OrderBy(_ => Random.Shared.Next())
+                    .ToList(),
+
+                SchedulingAlgorithm.WeightedRandom => OrderByWeightedRandom(taskList),
+
+                _ => taskList
+            };
+        }
+        private static List<QueueTask> OrderByWeightedRandom(List<QueueTask> tasks)
+        {
+            var remainingTasks = tasks.ToList();
+            var result = new List<QueueTask>();
+
+            while (remainingTasks.Count > 0)
+            {
+                int totalWeight = remainingTasks.Sum(task => Math.Max(task.Priorytet, 1));
+                int randomValue = Random.Shared.Next(1, totalWeight + 1);
+
+                int currentWeight = 0;
+                QueueTask? selectedTask = null;
+
+                foreach (var task in remainingTasks)
+                {
+                    currentWeight += Math.Max(task.Priorytet, 1);
+
+                    if (randomValue <= currentWeight)
+                    {
+                        selectedTask = task;
+                        break;
+                    }
+                }
+
+                selectedTask ??= remainingTasks[0];
+
+                result.Add(selectedTask);
+                remainingTasks.Remove(selectedTask);
+            }
+
+            return result;
+        }
     }
 }

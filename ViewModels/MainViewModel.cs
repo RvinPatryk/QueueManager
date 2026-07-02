@@ -192,9 +192,11 @@ namespace QueueManager.ViewModels
             _loggedUser = loggedUser;
             Autor = _loggedUser.Username;
             Id = _nextId;
+            _selectedAlgorithm = _queueSettingsRepository.Get().SelectedAlgorithm;
 
             TasksView = CollectionViewSource.GetDefaultView(Tasks);
             TasksView.Filter = FilterTasks;
+
 
             AddTaskCommand = new RelayCommand(AddTask, CanAddTask);
             DeleteTaskCommand = new RelayCommand(DeleteTasks, CanDeleteTasks);
@@ -496,7 +498,9 @@ namespace QueueManager.ViewModels
 
         private readonly UserRepository _userRepository = new();
 
-        private SchedulingAlgorithm _selectedAlgorithm = SchedulingAlgorithm.FIFO;
+        private readonly QueueSettingsRepository _queueSettingsRepository = new();
+
+        private SchedulingAlgorithm _selectedAlgorithm;
         private QueueTask? _nextTask;
 
         public Array AlgorithmOptions => Enum.GetValues(typeof(SchedulingAlgorithm));
@@ -506,10 +510,25 @@ namespace QueueManager.ViewModels
             get => _selectedAlgorithm;
             set
             {
-                if (SetField(ref _selectedAlgorithm, value))
+                if (!SetField(ref _selectedAlgorithm, value))
+                    return;
+
+                try
                 {
+                    _queueSettingsRepository.UpdateAlgorithm(value);
+
+                    AppLogger.Info(
+                        $"Administrator '{_loggedUser.Username}' ustawił globalny algorytm kolejki: {value}.");
+
                     NextTask = null;
                     CommandManager.InvalidateRequerySuggested();
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.Error("Błąd podczas zapisywania globalnego algorytmu kolejki.", ex);
+
+                    MessageHelper.ShowError(
+                        $"Nie udało się zapisać algorytmu kolejki.\n\nSzczegóły: {ex.Message}");
                 }
             }
         }

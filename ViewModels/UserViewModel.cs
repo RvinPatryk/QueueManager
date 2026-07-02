@@ -20,6 +20,13 @@ namespace QueueManager.ViewModels
 
         private bool _hideCompletedTasks = true;
 
+        private readonly QueueSettingsRepository _queueSettingsRepository = new();
+        private readonly TaskSchedulerService _taskSchedulerService = new();
+
+        private QueueTask? _currentTask;
+        private QueueTask? _nextTask;
+        private SchedulingAlgorithm _selectedAlgorithm;
+
         public ObservableCollection<QueueTask> Tasks { get; } = new();
 
         public string LoggedUsername => _loggedUser.Username;
@@ -66,19 +73,57 @@ namespace QueueManager.ViewModels
             {
                 Tasks.Clear();
 
-                var myTasks = _taskRepository
-                    .GetAll()
-                    .Where(t => string.Equals(
-                        t.OsobaPrzypisana,
+                var allTasks = _taskRepository.GetAll();
+
+                _selectedAlgorithm = _queueSettingsRepository.Get().SelectedAlgorithm;
+
+                var globallyOrderedNewTasks = _taskSchedulerService.OrderTasks(
+                    allTasks.Where(task => task.Status == QueueTaskStatus.Nowe),
+                    _selectedAlgorithm);
+
+                var myTasks = allTasks
+                    .Where(task => string.Equals(
+                        task.OsobaPrzypisana,
                         _loggedUser.Username,
                         StringComparison.OrdinalIgnoreCase))
-                    .Where(t => !HideCompletedTasks || t.Status != QueueTaskStatus.Zakonczone)
-                    .OrderBy(t => t.Status)
-                    .ThenBy(t => t.Termin ?? DateTime.MaxValue)
                     .ToList();
 
-                foreach (var task in myTasks)
+                CurrentTask = myTasks
+                    .Where(task => task.Status == QueueTaskStatus.WTrakcie)
+                    .OrderBy(task => task.DataRozpoczecia)
+                    .FirstOrDefault();
+
+                NextTask = globallyOrderedNewTasks
+                    .FirstOrDefault(task => string.Equals(
+                        task.OsobaPrzypisana,
+                        _loggedUser.Username,
+                        StringComparison.OrdinalIgnoreCase));
+
+                var orderedMyNewTasks = globallyOrderedNewTasks
+                    .Where(task => string.Equals(
+                        task.OsobaPrzypisana,
+                        _loggedUser.Username,
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                var otherMyTasks = myTasks
+                    .Where(task => task.Status != QueueTaskStatus.Nowe)
+                    .OrderBy(task => task.Status)
+                    .ThenBy(task => task.Termin ?? DateTime.MaxValue)
+                    .ToList();
+
+                var displayTasks = orderedMyNewTasks
+                    .Concat(otherMyTasks)
+                    .Where(task => !HideCompletedTasks ||
+                                   task.Status != QueueTaskStatus.Zakonczone)
+                    .ToList();
+
+                foreach (var task in displayTasks)
+                {
                     Tasks.Add(task);
+                }
+
+                OnPropertyChanged(nameof(SelectedAlgorithmName));
             }
             catch (Exception ex)
             {
@@ -94,6 +139,23 @@ namespace QueueManager.ViewModels
             {
                 if (SelectedTask == null)
                     return;
+
+                bool hasTaskInProgress = _taskRepository
+                    .GetAll()
+                    .Any(task =>
+                        string.Equals(
+                            task.OsobaPrzypisana,
+                            _loggedUser.Username,
+                            StringComparison.OrdinalIgnoreCase)
+                        && task.Status == QueueTaskStatus.WTrakcie);
+
+                if (hasTaskInProgress)
+                {
+                    MessageHelper.ShowError(
+                        "Nie możesz rozpocząć kolejnego zadania, ponieważ masz już zadanie w trakcie.");
+
+                    return;
+                }
 
                 SelectedTask.Status = QueueTaskStatus.WTrakcie;
                 SelectedTask.DataRozpoczecia = DateTime.Now;
@@ -116,7 +178,11 @@ namespace QueueManager.ViewModels
 
         private bool CanStartTask()
         {
-            return SelectedTask?.Status == QueueTaskStatus.Nowe;
+            bool hasTaskInProgress = Tasks.Any(
+                task => task.Status == QueueTaskStatus.WTrakcie);
+
+            return SelectedTask?.Status == QueueTaskStatus.Nowe
+                   && !hasTaskInProgress;
         }
 
         private void FinishTask()
@@ -172,5 +238,18 @@ namespace QueueManager.ViewModels
             OnPropertyChanged(propertyName);
             return true;
         }
+        public QueueTask? CurrentTask
+        {
+            get => _currentTask;
+            private set => SetField(ref _currentTask, value);
+        }
+
+        public QueueTask? NextTask
+        {
+            get => _nextTask;
+            private set => SetField(ref _nextTask, value);
+        }
+
+        public string SelectedAlgorithmName => _selectedAlgorithm.ToString();
     }
 }

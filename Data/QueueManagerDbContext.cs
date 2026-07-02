@@ -15,6 +15,8 @@ namespace QueueManager.Data
 
         public DbSet<User> Users { get; set; } = null!;
 
+        public DbSet<QueueSettings> QueueSettings { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var databasePath = Path.Combine(
@@ -65,6 +67,14 @@ namespace QueueManager.Data
                     .IsRequired();
 
                 entity.Property(user => user.Role)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<QueueSettings>(entity =>
+            {
+                entity.HasKey(settings => settings.Id);
+
+                entity.Property(settings => settings.SelectedAlgorithm)
                     .IsRequired();
             });
 
