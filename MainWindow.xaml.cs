@@ -60,5 +60,15 @@ namespace QueueManager
                 viewModel.LoadUsernames();
             }
         }
+
+        private void StatisticsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var statisticsWindow = new Views.StatisticsWindow
+            {
+                Owner = this
+            };
+
+            statisticsWindow.ShowDialog();
+        }
     }
 }
