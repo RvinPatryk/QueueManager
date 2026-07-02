@@ -15,6 +15,9 @@ namespace QueueManager.ViewModels
         public ISeries[] StatusSeries { get; }
         public ISeries[] AssignedUsersSeries { get; }
         public ISeries[] PrioritySeries { get; }
+        public string AverageActualTime { get; }
+        public string TotalActualTime { get; }
+        public int CompletedTasksWithDurationCount { get; }
 
         public Axis[] StatusXAxes { get; }
         public Axis[] AssignedUsersXAxes { get; }
@@ -23,6 +26,23 @@ namespace QueueManager.ViewModels
         public StatisticsViewModel()
         {
             var tasks = _taskRepository.GetAll();
+
+            var completedTasks = tasks
+                .Where(t => t.DataRozpoczecia.HasValue && t.DataUkonczenia.HasValue)
+                .Where(t => t.DataUkonczenia.Value >= t.DataRozpoczecia.Value)
+                .ToList();
+
+            var totalActualTime = TimeSpan.FromTicks(
+                completedTasks.Sum(t =>
+                    (t.DataUkonczenia!.Value - t.DataRozpoczecia!.Value).Ticks));
+
+            var averageActualTime = completedTasks.Count > 0
+                ? TimeSpan.FromTicks(totalActualTime.Ticks / completedTasks.Count)
+                : TimeSpan.Zero;
+
+            CompletedTasksWithDurationCount = completedTasks.Count;
+            TotalActualTime = totalActualTime.ToString(@"hh\:mm\:ss");
+            AverageActualTime = averageActualTime.ToString(@"hh\:mm\:ss");
 
             var statusData = new[]
             {
@@ -115,6 +135,7 @@ namespace QueueManager.ViewModels
                         .ToArray()
                 }
             ];
+
         }
     }
 }

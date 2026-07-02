@@ -42,10 +42,10 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0"
+        <Border Grid.Row="1"
                 Background="White"
                 BorderBrush="{StaticResource BorderBrushSoft}"
-                BorderThickness="0,0,0,1">
+                BorderThickness="0,0,0,1" Margin="10,99,-10,493">
 
             <Grid Margin="28,0">
                 <Grid.ColumnDefinitions>
@@ -70,6 +70,53 @@
                         VerticalAlignment="Center"/>
             </Grid>
         </Border>
+
+
+        <UniformGrid Columns="3" Margin="0,0,0,16">
+            <Border Background="#F8FAFC"
+            BorderBrush="{StaticResource BorderBrushSoft}"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="12"
+            Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Zadania z czasem"
+                       Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock Text="{Binding CompletedTasksWithDurationCount}"
+                       FontSize="22"
+                       FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#F8FAFC"
+            BorderBrush="{StaticResource BorderBrushSoft}"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="12"
+            Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Łączny czas realizacji"
+                       Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock Text="{Binding TotalActualTime}"
+                       FontSize="22"
+                       FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#F8FAFC"
+            BorderBrush="{StaticResource BorderBrushSoft}"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Średni czas realizacji"
+                       Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock Text="{Binding AverageActualTime}"
+                       FontSize="22"
+                       FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
 
         <!-- Content -->
         <ScrollViewer Grid.Row="1"
