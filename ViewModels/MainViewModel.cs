@@ -140,11 +140,18 @@ namespace QueueManager.ViewModels
             get => _selectedTasks;
             set
             {
-                if (SetField(ref _selectedTasks, value))
+                _selectedTasks = value;
+
+                if (_selectedTasks.Count == 1)
                 {
                     LoadSelectedTaskToForm();
-                    CommandManager.InvalidateRequerySuggested();
                 }
+                else
+                {
+                    ClearForm();
+                }
+
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 

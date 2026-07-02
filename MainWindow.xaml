@@ -518,50 +518,50 @@
                             
                         </Border>
                         <Button Content=""
-        Click="StatisticsButton_Click"
-        Background="#F8FAFC"
-        BorderBrush="{StaticResource BorderBrushSoft}"
-        BorderThickness="1"
-        Padding="12"
-        Margin="0,0,0,0"
-        Cursor="Hand">
+                        Click="StatisticsButton_Click"
+                        Background="#F8FAFC"
+                        BorderBrush="{StaticResource BorderBrushSoft}"
+                        BorderThickness="1"
+                        Padding="12"
+                        Margin="0,0,0,0"
+                        Cursor="Hand">
 
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="CardBorder"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="10"
-                    Padding="{TemplateBinding Padding}">
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10"
+                                    Padding="{TemplateBinding Padding}">
 
                                         <StackPanel>
                                             <TextBlock Text="Wykresy"
-                               Style="{StaticResource LabelTextStyle}"/>
+                                            Style="{StaticResource LabelTextStyle}"/>
 
                                             <TextBlock Text="Otwórz"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#1D4ED8"/>
+                                            FontSize="18"
+                                            FontWeight="SemiBold"
+                                            Foreground="#1D4ED8"/>
                                         </StackPanel>
                                     </Border>
 
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver"
-                         Value="True">
+                                        Value="True">
                                             <Setter TargetName="CardBorder"
-                            Property="Background"
-                            Value="#EFF6FF"/>
+                                            Property="Background"
+                                            Value="#EFF6FF"/>
                                             <Setter TargetName="CardBorder"
-                            Property="BorderBrush"
-                            Value="#BFDBFE"/>
+                                            Property="BorderBrush"
+                                            Value="#BFDBFE"/>
                                         </Trigger>
 
                                         <Trigger Property="IsPressed"
-                         Value="True">
+                                        Value="True">
                                             <Setter TargetName="CardBorder"
-                            Property="Opacity"
-                            Value="0.8"/>
+                                            Property="Opacity"
+                                            Value="0.8"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>

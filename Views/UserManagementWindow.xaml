@@ -261,6 +261,7 @@
                     <DataGrid Grid.Row="1"
                               ItemsSource="{Binding Users}"
                               SelectedItem="{Binding SelectedUser}"
+                              SelectionChanged="UsersDataGrid_SelectionChanged"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               SelectionMode="Single"

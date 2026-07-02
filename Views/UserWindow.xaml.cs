@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using QueueManager.Models;
 using QueueManager.Services;
 using QueueManager.ViewModels;

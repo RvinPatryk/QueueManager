@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using QueueManager.Models;
 using QueueManager.ViewModels;
 
@@ -30,6 +31,16 @@ namespace QueueManager.Views
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+        private void UsersDataGrid_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
+        {
+            if (DataContext is UserManagementViewModel viewModel &&
+                viewModel.SelectedUser == null)
+            {
+                NewPasswordBox.Clear();
+            }
         }
     }
 }

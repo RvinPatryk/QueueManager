@@ -31,16 +31,23 @@ namespace QueueManager.ViewModels
             get => _selectedUser;
             set
             {
-                if (SetField(ref _selectedUser, value))
-                {
-                    if (value != null)
-                    {
-                        NewUsername = value.Username;
-                        NewUserRole = value.Role;
-                    }
+                if (!SetField(ref _selectedUser, value))
+                    return;
 
-                    CommandManager.InvalidateRequerySuggested();
+                if (value != null)
+                {
+                    NewUsername = value.Username;
+                    NewUserRole = value.Role;
+                    NewPassword = string.Empty;
                 }
+                else
+                {
+                    NewUsername = string.Empty;
+                    NewPassword = string.Empty;
+                    NewUserRole = UserRole.User;
+                }
+
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
